@@ -1,0 +1,198 @@
+// Import Bulma's core
+@import "~bulma/sass/utilities/_all";
+// @import "~@mdi/font/css/materialdesignicons.css";
+
+// Set your colors
+$primary: #bd9210;
+$primary-invert: findColorInvert($primary);
+$secondary: #80b942;
+$secondary-invert: findColorInvert($secondary);
+$facebook: #2366d1;
+$facebook-invert: findColorInvert($facebook);
+
+// Setup $colors to use as bulma classes (e.g. 'is-facebook')
+$colors: (
+  "white": (
+    $white,
+    $black
+  ),
+  "black": (
+    $black,
+    $white
+  ),
+  "light": (
+    $light,
+    $light-invert
+  ),
+  "dark": (
+    $dark,
+    $dark-invert
+  ),
+  "primary": (
+    $primary,
+    $primary-invert
+  ),
+  "secondary": (
+    $secondary,
+    $secondary-invert
+  ),
+  "info": (
+    $info,
+    $info-invert
+  ),
+  "success": (
+    $success,
+    $success-invert
+  ),
+  "warning": (
+    $warning,
+    $warning-invert
+  ),
+  "danger": (
+    $danger,
+    $danger-invert
+  ),
+  "facebook": (
+    $facebook,
+    $facebook-invert
+  )
+);
+
+// Links
+$link: $primary;
+$link-invert: $primary-invert;
+$link-focus-border: $primary;
+
+// Global Variable
+$box-padding: 1.5rem;
+$section-padding: 1.75rem;
+$card-content-padding: 0.75rem;
+
+// Import Bulma and Buefy styles
+@import "~bulma";
+@import "~buefy/src/scss/buefy";
+
+// CSS Global
+body {
+  font-family: sans-serif;
+  min-height: 100vh !important;
+}
+.row{
+  padding: 1rem 0;
+}
+
+.navbar-item.is-active {
+  color: $primary !important;
+}
+
+.bg1 {
+  background-color: white;
+  background-size: 100%;
+  background-image: url("/static/img/background_construction.png");
+  background-repeat: repeat-y;
+  background-position: top;
+  min-height: 100vh;
+}
+.bg2 {
+  background-color: #f0f0f0;
+}
+.bg3 {
+  background-color: $primary;
+  padding: 1rem 0;
+}
+.bg4 {
+  background-color: #ffffff;
+  padding: 1rem 0;
+}
+.content-title{
+  padding-bottom: 1rem;
+}
+// Navbar
+.tag-copyright {
+  display: none;
+}
+// Card
+.media{
+  margin-bottom: 0rem !important;
+}
+.content p{
+  margin-bottom: 0.5rem !important;
+  font-size: 9pt;
+}
+.cardlabel{
+  position: absolute;
+  left: 0px;
+  top: 15px;
+  z-index: 1;
+  border-radius: 0 !important
+}
+
+// Slider
+.VueCarousel-navigation-button{
+  box-shadow: 2px 3px 5px rgba(10, 10, 10, 0.2)!important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  color: $primary !important;
+  outline: none !important;
+  background-color: white !important;
+}
+.VueCarousel-navigation--disabled{
+  opacity: 1 !important;
+  color: transparentize($primary, 0.5) !important;
+}
+.VueCarousel-navigation-prev{
+  margin-left: 20px;
+}
+.VueCarousel-navigation-next{
+  margin-right: 20px;
+}
+.mapouter {
+  position: relative;
+  text-align: right;
+  height: 100%;
+  width: 100%;
+}
+.gmap_canvas, #gmap_canvas {
+  overflow: hidden;
+  background: none !important;
+  height: 100%;
+  width: 100%;
+}
+
+@media only screen and (max-width: 780px) {
+  .bg1 {
+    background-image: none;
+  }
+  .navbar-menu {
+    min-height: 100vh;
+    width: 100%;
+    position: fixed;
+  }
+  .tag-copyright {
+    display: block;
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    width: 100%;
+    color: rgb(143, 143, 143);
+    font-size: 10pt;
+  }
+}
+@media only screen and (max-width: 1024px) {
+  // .view{
+  //   padding: 1rem 1.5rem !important;
+  // }
+  .section{
+    padding: 1rem 1.5rem !important;
+  }
+}
+
+
+// // Your variable overrides
+// $primary: #bf9b30;
+
+// // Bootstrap and its default variables
+// @import "~bootstrap/scss/bootstrap";
+// // BootstrapVue and its default variables
+// @import "~bootstrap-vue/src/index.scss";
