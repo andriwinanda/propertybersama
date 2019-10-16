@@ -23,33 +23,45 @@
             </p>
           </b-field>
           <b-field grouped>
-            <b-select v-model="searchForm.category">
+            <b-select v-model="searchForm.category" placeholder="Category">
+              <option value>Semua</option>
               <option
                 v-for="category in categoryList"
                 :value="category.id"
                 :key="category.id"
-              >{{ category.name }}</option>
+              >{{ capitalize(category.name) }}</option>
             </b-select>
-            <b-select v-model="searchForm.price">
+
+            <!-- <b-select v-model="searchForm.price">
               <option v-for="price in priceList" :value="price.id" :key="price.id">{{ price.name }}</option>
-            </b-select>
+            </b-select>-->
+            <b-field class="rangePrice">
+              <b-input placeholder="Min" v-model="searchForm.start_price" type="number"></b-input>
+            </b-field>
+            <b-field class="rangePrice">
+              <b-input placeholder="Max" v-model="searchForm.end_price" type="number"></b-input>
+            </b-field>
           </b-field>
         </div>
       </div>
       <div class="row">
-        <div class="bg2 section is-vcentered" style="height: 200px">
-          <p
+        <div class="bg2">
+          <!-- <p
             class="is-size-3 has-text-centered has-text-grey-light"
             style="padding-top: 50px"
-          >Embeded Virtual Tour</p>
+          >Embeded Virtual Tour</p>-->
+          <video autoplay loop>
+            <source
+              src="https://creatives-assets.s3-ap-southeast-1.amazonaws.com/regional/Rumah/Desktop.mp4"
+              type="video/mp4"
+            />
+          </video>
         </div>
       </div>
       <div class="row">
         <!-- Content -->
         <div class="content-title">
-          <p
-            class="has-text-primary is-size-5 title"
-          >Rekomendasi Kami Untuk Anda</p>
+          <p class="has-text-primary is-size-5 title">Rekomendasi Kami Untuk Anda</p>
           <p class="subtitle is-size-7">Properti pilihan yang sayang jika Anda lewatkan.</p>
         </div>
         <carousel
@@ -63,13 +75,13 @@
               <div class="card-image">
                 <b-tag type="is-primary" class="cardlabel">{{slide.type}}</b-tag>
                 <figure class="image is-4by3">
-                  <img :src="slide.img" alt="Placeholder image" />
+                  <img :src="slide.image" alt="Placeholder image" />
                 </figure>
               </div>
               <div class="card-content">
                 <div class="media">
                   <div class="media-content">
-                    <p class="title is-6 is-size-6-mobile">{{slide.name}}</p>
+                    <p class="title is-6 is-size-6-mobile">{{capitalize(slide.name)}}</p>
                   </div>
                   <div class="media-right">
                     <b-icon icon="heart"></b-icon>
@@ -77,8 +89,16 @@
                 </div>
 
                 <div class="content">
-                  <p class="has-text-grey">{{slide.cluster+', '+slide.city}}</p>
-                  <p class="title is-6"><vue-numeric decimal-separator="." currency="Rp" separator="." readOnly :value="slide.price" /></p>
+                  <p class="has-text-grey">{{slide.district+', '+slide.city}}</p>
+                  <p class="title is-6">
+                    <vue-numeric
+                      decimal-separator="."
+                      currency="Rp"
+                      separator="."
+                      :readOnly="true"
+                      :value="slide.price"
+                    />
+                  </p>
                 </div>
               </div>
             </div>
@@ -110,14 +130,19 @@
                 </b-field>
                 <b-field label="Kota Terpopuler" class="has-text-grey-light">
                   <div class="buttons">
-                    <span class="button" @click="listing()">Medan</span>
-                    <span class="button" @click="listing()">Jakarta Selatan</span>
+                    <span
+                      class="button"
+                      v-for="city in popularCity"
+                      :key="city.id"
+                      @click="listingByCity(city.id)"
+                    >{{city.nama}}</span>
+                    <!-- <span class="button" @click="listing()">Jakarta Selatan</span>
                     <span class="button" @click="listing()">Surabaya</span>
                     <span class="button" @click="listing()">Palembang</span>
                     <span class="button" @click="listing()">Yogyakarta</span>
                     <span class="button" @click="listing()">Solo</span>
                     <span class="button" @click="listing()">Makasar</span>
-                    <span class="button" @click="listing()">Padang</span>
+                    <span class="button" @click="listing()">Padang</span>-->
                   </div>
                 </b-field>
               </div>
@@ -147,20 +172,21 @@
 </template>
 <script>
 import { Carousel, Slide } from "vue-carousel";
-import VueNumeric from 'vue-numeric'
+import VueNumeric from "vue-numeric";
+import { capitalizeFLetter } from "../functionHelper.js";
 export default {
   components: {
     Carousel,
     Slide,
     VueNumeric
   },
-  data () {
+  data() {
     return {
       categoryList: [
-        { id: "", name: "Semua" },
-        { id: 'rumah', name: "Rumah" },
-        { id: 'villa', name: "Ruko" },
-        { id: 'apartment', name: "Apartment" }
+        // { id: "", name: "Semua" },
+        // { id: "rumah", name: "Rumah" },
+        // { id: "villa", name: "Ruko" },
+        // { id: "apartment", name: "Apartment" }
       ],
       priceList: [
         { id: "", name: "Semua Harga" },
@@ -171,139 +197,75 @@ export default {
         name: "",
         type: "",
         category: "",
-        price: ""
+        start_price: 0,
+        end_price: 500000000
       },
-      slides: [
-        {
-          id: 1,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 2,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 3,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 4,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 5,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 6,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 7,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 8,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 9,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 10,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 11,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 12,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        }
-      ],
+      popularCity: [],
       recomended: []
     };
   },
   methods: {
-    seeDetail () {
+    seeDetail() {
       this.$router.push("/listing/detail");
     },
-    listing () {
+    listing() {
       this.$router.push({
-        path: "/listing", 
+        path: "/listing",
         query: {
           city: this.searchForm.city,
-          category: this.searchForm.category
+          category: this.searchForm.category,
+          start_price: this.searchForm.start_price,
+          end_price: this.searchForm.end_price
         }
       });
     },
-    getRecomendation () {
+    listingByCity(id) {
+      this.searchForm.city = id;
+      this.listing();
+    },
+    getRecomendation() {
       let requestData = {
-        "category": "",
-        "city": "",
-        "type": "",
-        "limit": "30",
-        "offset": "",
-        "order": "0"
-      }
-      this.axios.post('/url/product/get_recommended', requestData)
-      .then(res => {
-        this.recomended = res.data.content
-      })
+        category: "",
+        city: "",
+        type: "",
+        limit: "30",
+        offset: "",
+        order: "0"
+      };
+      this.axios
+        .post(
+          "http://administrator.propertybersama.com/product/get_recommended",
+          requestData
+        )
+        .then(res => {
+          this.recomended = res.data.content;
+        });
+    },
+    getPopularCity() {
+      this.axios
+        .get(
+          "http://administrator.propertybersama.com/city/get_city_based_product"
+        )
+        .then(res => {
+          this.popularCity = res.data.content;
+        });
+    },
+    getCategory() {
+      this.axios
+        .get("http://administrator.propertybersama.com/category/get")
+        .then(res => {
+          this.categoryList = res.data.content;
+          console.log(this.categoryList);
+        });
+    },
+    capitalize(txt) {
+      return capitalizeFLetter(txt);
     }
   },
   created() {
-    this.getRecomendation()
+    this.getRecomendation();
+    this.getPopularCity();
+    this.getCategory();
   }
 };
 </script>
@@ -330,5 +292,8 @@ export default {
 }
 .media:not(:last-child) {
   padding-bottom: 0.5rem !important;
+}
+.rangePrice input {
+  width: 200px;
 }
 </style>

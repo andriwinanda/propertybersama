@@ -78,7 +78,7 @@ export default {
       }
 
 
-      this.axios.post('/url/member/login', dataLogin)
+      this.axios.post('http://administrator.propertybersama.com/member/login', dataLogin)
         .then((res) => {
 
           this.$buefy.toast.open({

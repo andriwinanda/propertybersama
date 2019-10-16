@@ -224,7 +224,7 @@ export default {
         "user": "sanjaya.kiran@gmail.com",
         "pass": "TddklS9g"
       }
-      this.axios.get('/url/member/detail')
+      this.axios.get('http://administrator.propertybersama.com/member/detail')
         .then((res) => {
           console.log(res)
         })

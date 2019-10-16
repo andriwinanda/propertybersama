@@ -5,14 +5,10 @@
         <div class="container is-fluid">
           <div class="columns is-multiline">
             <div class="column is-6">
-              <p class="title is-size-3-mobile is-size-2-desktop">
-                {{articleList[0].title}}
-              </p>
+              <p class="title is-size-3-mobile is-size-2-desktop">{{articleList[0].title}}</p>
             </div>
             <div class="column is-12">
-              <p v-html="(articleList[0].text).substring(0,100)+'...'">
-                
-              </p>
+              <p v-html="(articleList[0].text).substring(0,100)+'...'"></p>
               <br />
               <br />
               <button class="button is-primary is-medium">Baca Selengkapnya</button>
@@ -75,35 +71,32 @@
 </template>
 <script>
 export default {
-  data () {
+  data() {
     return {
       articleList: []
     };
   },
   methods: {
-    getArticle () {
-      let token = localStorage.getItem('token')
+    getArticle() {
+      let token = localStorage.getItem("token");
       let requestData = {
-        "category_id": "24",
-        "language": "ID",
-        "limit": 50,
-        "start": 0
-      }
-      this.axios.post('/url/article/get_article_list', 
-        requestData,
-        {
-          headers: {
-          'Token': token
-          }
-        }
-      )
+        category_id: "24",
+        language: "ID",
+        limit: 50,
+        start: 0
+      };
+      this.axios
+        .post(
+          "http://administrator.propertybersama.com/article/get_article_list",
+          requestData
+        )
         .then(res => {
-          this.articleList = res.data.content
-        })
+          this.articleList = res.data.content;
+        });
     }
   },
-  created () {
-    this.getArticle()
+  created() {
+    this.getArticle();
   }
 };
 </script>

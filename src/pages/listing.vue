@@ -28,8 +28,9 @@
       </div>
     </div>
     <div class="row section listing">
-        <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="true"></b-loading>
+      <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="true"></b-loading>
       <div class="container is-fluid">
+        
         <!-- <div class="columns is-vcentered is-multiline">
           <div class="column">
             <p class="has-text-primary is-size-5 title">18 Properti Di Kota Medan Ditemukan</p>
@@ -72,7 +73,15 @@
 
                   <div class="content">
                     <p class="has-text-grey">{{slide.cluster+", " +slide.city}}</p>
-                    <p class="title is-6"><vue-numeric decimal-separator="." currency="Rp" separator="." readOnly :value="slide.price" /></p>
+                    <p class="title is-6">
+                      <vue-numeric
+                        decimal-separator="."
+                        currency="Rp"
+                        separator="."
+                        :readOnly="true"
+                        :value="slide.price"
+                      />
+                    </p>
                   </div>
                 </div>
               </div>
@@ -124,7 +133,15 @@
                           <p class="subtitle is-6 has-text-grey">
                             <small>{{slide.cluster+", " +slide.city}}</small>
                           </p>
-                          <p class="title is-6"><vue-numeric decimal-separator="." currency="Rp" separator="." readOnly :value="slide.price" /></p>
+                          <p class="title is-6">
+                            <vue-numeric
+                              decimal-separator="."
+                              currency="Rp"
+                              separator="."
+                              readonly
+                              :value="slide.price"
+                            />
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -159,7 +176,7 @@
 <script>
 import GoogleMapsLoader from "google-maps";
 import googleMap from "../component/Maps.vue";
-import VueNumeric from 'vue-numeric'
+import VueNumeric from "vue-numeric";
 
 export default {
   components: { googleMap, VueNumeric },
@@ -275,30 +292,34 @@ export default {
     seeDetail() {
       this.$router.push("/listing/detail");
     },
-    next(){
-      this.offset += this.limit
-      this.getData()
+    next() {
+      this.offset += this.limit;
+      this.getData();
     },
-    prev(){
-      this.offset -= this.limit
-      this.getData()
+    prev() {
+      this.offset -= this.limit;
+      this.getData();
     },
-    getData(){
-      this.isLoading = true
-      let requestData = {}
-      if(this.$route.query) requestData = this.$route.query
-      requestData.offset = this.offset
-      requestData.limit = this.limit
-      this.axios.post('/url/product/get', requestData)
-      .then(res => {
-        this.isLoading = false
-        this.dataList = res.data.content
-        this.record = res.data.record
-      })
+    getData() {
+      this.isLoading = true;
+      let requestData = {};
+      if (this.$route.query) requestData = this.$route.query;
+      requestData.offset = this.offset;
+      requestData.limit = this.limit;
+      this.axios
+        .post(
+          "http://administrator.propertybersama.com/product/get",
+          requestData
+        )
+        .then(res => {
+          this.isLoading = false;
+          this.dataList = res.data.content;
+          this.record = res.data.record;
+        });
     }
   },
   created() {
-    this.getData()
+    this.getData();
   }
 };
 </script>
@@ -317,7 +338,7 @@ export default {
 .listing {
   padding-top: 4.3rem;
 }
-.imgList{
+.imgList {
   min-height: 100%;
   height: auto;
   max-width: 100%;
