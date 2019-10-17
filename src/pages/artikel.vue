@@ -1,5 +1,6 @@
 <template>
   <div>
+    <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="true"></b-loading>
     <section class="section is-secondary hero banner">
       <div class="hero-body">
         <div class="container is-fluid">
@@ -23,7 +24,7 @@
         <hr />
         <div class="columns is-multiline">
           <div class="column is-3" v-for="article in articleList" :key="article.id">
-            <div class="card" @click="seeDetail()">
+            <div class="card" @click="readMore(article.id)">
               <div class="card-image">
                 <figure class="image is-4by3">
                   <img :src="article.image" alt="Property Bersama" />
@@ -38,7 +39,11 @@
 
                 <div class="content">
                   <p v-html="(article.text).substring(0,100)+'...'"></p>
-                  <b-button type="is-primary" class="is-fullwidth">Baca Selengkapnya</b-button>
+                  <b-button
+                    type="is-primary"
+                    class="is-fullwidth"
+                    @click.prevent="readMore(article.id)"
+                  >Baca Selengkapnya</b-button>
                 </div>
               </div>
             </div>
@@ -73,11 +78,13 @@
 export default {
   data() {
     return {
-      articleList: []
+      articleList: [],
+      isLoading: false
     };
   },
   methods: {
     getArticle() {
+      this.isLoading = true;
       let token = localStorage.getItem("token");
       let requestData = {
         category_id: "24",
@@ -92,8 +99,22 @@ export default {
         )
         .then(res => {
           this.articleList = res.data.content;
+        })
+        .finally(() => {
+          this.isLoading = false;
         });
-    }
+    },
+    readMore(id) {
+      this.$router.push(`/artikel-detail/${id}`);
+    },
+    next() {
+      this.offset += this.limit;
+      this.getData();
+    },
+    prev() {
+      this.offset -= this.limit;
+      this.getData();
+    },
   },
   created() {
     this.getArticle();

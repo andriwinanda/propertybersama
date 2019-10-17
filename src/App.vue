@@ -175,10 +175,6 @@ export default {
           link: "/deals"
         },
         {
-          title: "Berita properti",
-          link: "/berita"
-        },
-        {
           title: "Artikel",
           link: "/artikel"
         }

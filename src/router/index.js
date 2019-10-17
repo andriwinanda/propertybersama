@@ -7,6 +7,7 @@ import Home from '@/pages/home'
 import Detail from '@/pages/detail'
 import Listing from '@/pages/listing'
 import Artikel from '@/pages/artikel'
+import ArtikelDetail from '@/pages/artikel-detail'
 import BeritaProperti from '@/pages/berita-properti'
 
 import Dashboard from '@/pages/dashboard'
@@ -53,6 +54,10 @@ const router = new Router({
       component: Artikel
     },
     {
+      path: '/artikel-detail/:id',
+      component: ArtikelDetail
+    },
+    {
       path: '/berita',
       component: BeritaProperti
     },
@@ -61,6 +66,8 @@ const router = new Router({
       path: '/dashboard',
       component: Dashboard
     },
+    
+
     {
       path: '/edit-profile',
       component: EditProfile
