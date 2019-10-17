@@ -10,7 +10,7 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: { 
+    proxyTable: {
       '/url/': {
         target: 'http://administrator.propertybersama.com/',
         pathRewrite: { '^/url': "" },
@@ -24,6 +24,11 @@ module.exports = {
         logLevel: 'debug'
       }
     },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': '*',
+      'Access-Control-Allow-Methods': '*',
+    },
 
 
     // Various Dev Server settings
@@ -34,7 +39,7 @@ module.exports = {
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
 
-    
+
     /**
      * Source Maps
      */
@@ -58,6 +63,25 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
+    proxyTable: {
+      '/url/': {
+        target: 'http://administrator.propertybersama.com/',
+        pathRewrite: { '^/url': "" },
+        changeOrigin: true,
+        logLevel: 'debug'
+      },
+      '/virtual/': {
+        target: 'https://captur3d.io/',
+        pathRewrite: { '^/virtual': "" },
+        changeOrigin: true,
+        logLevel: 'debug'
+      }
+    },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': '*',
+      'Access-Control-Allow-Methods': '*',
+    },
 
     /**
      * Source Maps

@@ -6,17 +6,36 @@
           <div class="column is-10">
             <b-field grouped>
               <b-input placeholder="Masukkan Daerah, Kota atau Property" expanded></b-input>
-              <b-select placeholder="Select a category">
-                <option value="1">Rumah</option>
-                <option value="2">Ruko</option>
+              <b-select v-model="searchForm.category" placeholder="Category">
+                <option value>Semua</option>
+                <option
+                  v-for="category in categoryList"
+                  :value="category.id"
+                  :key="category.id"
+                >{{ capitalize(category.name) }}</option>
               </b-select>
-              <b-select placeholder="Select a price">
-                <option value="1">Semua Harga</option>
-              </b-select>
+              <b-field class="control">
+                <b-dropdown aria-role="list">
+                  <button class="button" type="button" slot="trigger">
+                    <span v-if="!searchForm.start_price && !searchForm.end_price">Harga</span>
+                    <span v-else>Rp {{searchForm.start_price +" - "+searchForm.end_price}}</span>
+                    <b-icon icon="menu-down"></b-icon>
+                  </button>
 
-              <p class="control">
-                <b-button type="is-primary">Search</b-button>
-              </p>
+                  <b-dropdown-item aria-role="menu-item" :focusable="false" custom>
+                    <b-field class="rangePrice">
+                      <b-input placeholder="Min" v-model="searchForm.start_price" type="number"></b-input>
+                    </b-field>
+                    <b-field class="rangePrice">
+                      <b-input placeholder="Max" v-model="searchForm.end_price" type="number"></b-input>
+                    </b-field>
+                  </b-dropdown-item>
+                </b-dropdown>
+              </b-field>
+
+              <b-field class="control">
+                <b-button type="is-primary" @click.prevent="search()">Search</b-button>
+              </b-field>
             </b-field>
           </div>
           <div class="column is-2 has-text-right">
@@ -30,7 +49,6 @@
     <div class="row section listing">
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="true"></b-loading>
       <div class="container is-fluid">
-        
         <!-- <div class="columns is-vcentered is-multiline">
           <div class="column">
             <p class="has-text-primary is-size-5 title">18 Properti Di Kota Medan Ditemukan</p>
@@ -72,7 +90,7 @@
                   </div>
 
                   <div class="content">
-                    <p class="has-text-grey">{{slide.cluster+", " +slide.city}}</p>
+                    <p class="has-text-grey">{{slide.district+", " +slide.city}}</p>
                     <p class="title is-6">
                       <vue-numeric
                         decimal-separator="."
@@ -131,14 +149,14 @@
                         <div class="column">
                           <p class="title is-6 is-size-6-mobile">{{((slide.name).toUpperCase())}}</p>
                           <p class="subtitle is-6 has-text-grey">
-                            <small>{{slide.cluster+", " +slide.city}}</small>
+                            <small>{{slide.district+", " +slide.city}}</small>
                           </p>
                           <p class="title is-6">
                             <vue-numeric
                               decimal-separator="."
                               currency="Rp"
                               separator="."
-                              readonly
+                              :readOnly="true"
                               :value="slide.price"
                             />
                           </p>
@@ -177,6 +195,7 @@
 import GoogleMapsLoader from "google-maps";
 import googleMap from "../component/Maps.vue";
 import VueNumeric from "vue-numeric";
+import { capitalizeFLetter } from "../functionHelper";
 
 export default {
   components: { googleMap, VueNumeric },
@@ -185,107 +204,17 @@ export default {
       mapView: false,
       isLoading: false,
       dataList: [],
+      categoryList: [],
+      searchForm: {
+        name: "",
+        type: "",
+        category: "",
+        start_price: null,
+        end_price: null
+      },
       record: 0,
       offset: 0,
-      limit: 10,
-      slides: [
-        {
-          id: 1,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 2,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 3,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 4,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 5,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 6,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 7,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 8,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 9,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 10,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 11,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        },
-        {
-          id: 12,
-          title: "Dijual Rumah di Komplek Murni Residence",
-          address: "Jalan Gaharu gg murni no. 8cc Medan, Indonesia",
-          price: "Rp 500.000.000",
-          img:
-            "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-        }
-      ]
+      limit: 10
     };
   },
   methods: {
@@ -300,10 +229,20 @@ export default {
       this.offset -= this.limit;
       this.getData();
     },
+    search() {
+      this.$router.replace({
+        query: {
+          city: this.searchForm.city,
+          category: this.searchForm.category,
+          start_price: this.searchForm.start_price,
+          end_price: this.searchForm.end_price
+        }
+      });
+      this.getData()
+    },
     getData() {
       this.isLoading = true;
-      let requestData = {};
-      if (this.$route.query) requestData = this.$route.query;
+      let requestData = this.searchForm;
       requestData.offset = this.offset;
       requestData.limit = this.limit;
       this.axios
@@ -312,14 +251,34 @@ export default {
           requestData
         )
         .then(res => {
+
           this.isLoading = false;
           this.dataList = res.data.content;
           this.record = res.data.record;
         });
+    },
+    getCategory() {
+      this.axios
+        .get("http://administrator.propertybersama.com/category/get")
+        .then(res => {
+          this.categoryList = res.data.content;
+          console.log(this.categoryList);
+        });
+    },
+    capitalize(txt) {
+      return capitalizeFLetter(txt);
     }
   },
   created() {
+    if (this.$route.query) {
+      let query = this.$route.query;
+      this.searchForm.category = query.category;
+      this.searchForm.start_price = query.start_price;
+      this.searchForm.end_price = query.end_price;
+      this.searchForm.city = query.city
+    }
     this.getData();
+    this.getCategory();
   }
 };
 </script>

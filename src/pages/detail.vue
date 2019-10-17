@@ -114,6 +114,31 @@ export default {
           "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
       }
     ]
-  })
+  }),
+  methods: {
+     getData(id) {
+      this.isLoading = true;
+      this.axios
+        .get(
+          `https://captur3d.io/api/v1/properties/${id}?expand=virtual_tours`,
+          {
+            headers: {
+              authorization: "Bearer I/r2Z/xEgOtyEyk/BXTEMaQ9vlrZzCmg2JJ/bGu6QgU="
+            }
+          }
+        )
+        .then(res => {
+
+          this.isLoading = false;
+          // this.dataList = res.data.content;
+          // this.record = res.data.record;
+          console.log(res)
+        });
+    }
+  },
+  created() {
+    let id = this.$route.params.id
+    this.getData(id)
+  }
 };
 </script>

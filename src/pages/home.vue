@@ -5,7 +5,7 @@
         <div class="column is-6 has-text-centered">
           <img
             style="display: block; margin: 0 auto;"
-            src="@/assets/img/logo.png"
+            src="@/assets/img/logo.jpg"
             width="450"
             fluid
             center
@@ -35,12 +35,22 @@
             <!-- <b-select v-model="searchForm.price">
               <option v-for="price in priceList" :value="price.id" :key="price.id">{{ price.name }}</option>
             </b-select>-->
-            <b-field class="rangePrice">
-              <b-input placeholder="Min" v-model="searchForm.start_price" type="number"></b-input>
-            </b-field>
-            <b-field class="rangePrice">
-              <b-input placeholder="Max" v-model="searchForm.end_price" type="number"></b-input>
-            </b-field>
+            <b-dropdown aria-role="list">
+              <button class="button" type="button" slot="trigger">
+                <span v-if="!searchForm.start_price && !searchForm.end_price">Harga</span>
+                <span v-else>Rp {{searchForm.start_price +" - "+searchForm.end_price}}</span>
+                <b-icon icon="menu-down"></b-icon>
+              </button>
+
+              <b-dropdown-item aria-role="menu-item" :focusable="false" custom>
+                <b-field class="rangePrice">
+                  <b-input placeholder="Min" v-model="searchForm.start_price" type="number"></b-input>
+                </b-field>
+                <b-field class="rangePrice">
+                  <b-input placeholder="Max" v-model="searchForm.end_price" type="number"></b-input>
+                </b-field>
+              </b-dropdown-item>
+            </b-dropdown>
           </b-field>
         </div>
       </div>
@@ -118,12 +128,17 @@
                   <b-field grouped>
                     <b-autocomplete
                       expanded
-                      v-model="name"
-                      placeholder="e.g. Medan"
-                      @select="option => selected = option"
-                    ></b-autocomplete>
+                      v-model="searchType"
+                      placeholder="Masukan Kota"
+                      :data="filteredDataObj"
+                      :field="searchForm.city"
+                      @select="option => searchForm.city = option.id"
+                    >
+                      <template slot="empty">No results found</template>
+                      <template slot-scope="props">{{ props.option.nama }}</template>
+                    </b-autocomplete>
                     <p class="control">
-                      <b-button type="is-primary">Search</b-button>
+                      <b-button type="is-primary" @click.prevent="listing()">Search</b-button>
                     </p>
                   </b-field>
                   <template slot="empty">No results for</template>
@@ -174,6 +189,7 @@
 import { Carousel, Slide } from "vue-carousel";
 import VueNumeric from "vue-numeric";
 import { capitalizeFLetter } from "../functionHelper.js";
+// import debounce from 'lodash/debounce'
 export default {
   components: {
     Carousel,
@@ -195,11 +211,13 @@ export default {
       ],
       searchForm: {
         name: "",
+        city: "",
         type: "",
         category: "",
         start_price: 0,
         end_price: 500000000
       },
+      searchType: "",
       popularCity: [],
       recomended: []
     };
@@ -260,6 +278,23 @@ export default {
     },
     capitalize(txt) {
       return capitalizeFLetter(txt);
+    },
+    citySelected(value){
+      // this.searchForm.city = option.id 
+      // this.searchType = option.nama
+      console.log(value)
+    }
+  },
+  computed: {
+    filteredDataObj() {
+      return this.popularCity.filter(option => {
+        return (
+          option.nama
+            .toString()
+            .toLowerCase()
+            .indexOf(this.searchType) >= 0
+        );
+      });
     }
   },
   created() {

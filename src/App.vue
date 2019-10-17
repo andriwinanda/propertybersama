@@ -4,7 +4,7 @@
       <div class="container is-fluid">
         <div class="navbar-brand">
           <a class="navbar-item logo" @click.prevent="home()">
-            <img src="@/assets/img/logo.png" alt="Logo" />
+            <img src="@/assets/img/logo.jpg" alt="Logo" />
           </a>
           <span
             class="navbar-burger burger"
@@ -59,7 +59,7 @@
     <!-- <b-navbar toggleable="lg" type="light">
       <b-container>
         <router-link to="/" tag="b-navbar-brand">
-          <b-img src="@/assets/img/logo.png" width="80" alt="Fluid image"></b-img>
+          <b-img src="@/assets/img/logo.jpg" width="80" alt="Fluid image"></b-img>
         </router-link>
 
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>

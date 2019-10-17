@@ -45,7 +45,7 @@ const router = new Router({
       component: Listing
     },
     {
-      path: '/listing/detail',
+      path: '/listing/detail/:id',
       component: Detail
     },
     {
