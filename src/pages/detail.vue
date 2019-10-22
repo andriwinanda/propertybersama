@@ -155,7 +155,7 @@
             />
             <br/>
             <br/>
-            <b-button type="is-primary" outlined size="is-medium" class="is-fullwidth" @click.prevent="gotoNewTab(content3d.one_page_website.url.branded)">See Detail</b-button>
+            <b-button type="is-primary" outlined size="is-medium" class="is-fullwidth" @click.prevent="gotoNewTab(content3d.one_page_website.url.branded)">Detail Page</b-button>
           </div>
           <div class="column is-12">
             <iframe
