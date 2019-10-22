@@ -5,7 +5,16 @@
         <div class="columns is-vcentered">
           <div class="column is-10">
             <b-field grouped>
-              <b-input placeholder="Masukkan Daerah, Kota atau Property" expanded></b-input>
+              <b-autocomplete
+                expanded
+                v-model="searchType"
+                placeholder="Masukan Kota"
+                :data="filteredDataObj"
+                field="nama"
+                @select="option => searchForm.city = option.id"
+              >
+                <template slot="empty">No results found</template>
+              </b-autocomplete>
               <b-select v-model="searchForm.category" placeholder="Category">
                 <option value>Semua</option>
                 <option
@@ -72,7 +81,7 @@
           <p class="has-text-primary is-size-5 title">{{record}} Properti Ditemukan Untuk Anda</p>
           <div class="columns is-multiline">
             <div class="column is-3" v-for="slide in dataList" :key="slide.id">
-              <div class="card" @click="seeDetail()">
+              <div class="card" @click="seeDetail(slide.id)">
                 <div class="card-image">
                   <b-tag type="is-primary" class="cardlabel">{{slide.type}}</b-tag>
                   <figure class="image is-4by3">
@@ -92,13 +101,14 @@
                   <div class="content">
                     <p class="has-text-grey">{{slide.district+", " +slide.city}}</p>
                     <p class="title is-6">
-                      <vue-numeric
+                      <!-- <vue-numeric
                         decimal-separator="."
                         currency="Rp"
                         separator="."
                         :readOnly="true"
                         :value="slide.price"
-                      />
+                      /> -->
+                      Rp {{slide.price_word}}
                     </p>
                   </div>
                 </div>
@@ -140,7 +150,7 @@
 
               <div class="columns is-multiline">
                 <div class="column is-12" v-for="slide in dataList" :key="slide.id">
-                  <div class="card" @click="seeDetail()">
+                  <div class="card" @click="seeDetail(slide.id)">
                     <div class="card-content">
                       <div class="columns is-multiline">
                         <div class="column is-3 is-paddingless">
@@ -152,13 +162,14 @@
                             <small>{{slide.district+", " +slide.city}}</small>
                           </p>
                           <p class="title is-6">
-                            <vue-numeric
+                            <!-- <vue-numeric
                               decimal-separator="."
                               currency="Rp"
                               separator="."
                               :readOnly="true"
                               :value="slide.price"
-                            />
+                            /> -->
+                            Rp {{slide.price_word}}
                           </p>
                         </div>
                       </div>
@@ -207,19 +218,34 @@ export default {
       categoryList: [],
       searchForm: {
         name: "",
+        city: "",
         type: "",
         category: "",
         start_price: null,
         end_price: null
       },
+      popularCity: [],
+      searchType: "",
       record: 0,
       offset: 0,
       limit: 10
     };
   },
+  computed: {
+    filteredDataObj() {
+      return this.popularCity.filter(option => {
+        return (
+          option.nama
+            .toString()
+            .toLowerCase()
+            .indexOf(this.searchType) >= 0
+        );
+      });
+    }
+  },
   methods: {
-    seeDetail() {
-      this.$router.push("/listing/detail");
+    seeDetail(id) {
+      this.$router.push("/listing/detail/"+id);
     },
     next() {
       this.offset += this.limit;
@@ -230,15 +256,26 @@ export default {
       this.getData();
     },
     search() {
+      if(!this.searchType) this.searchForm.city = ""
       this.$router.replace({
         query: {
           city: this.searchForm.city,
           category: this.searchForm.category,
           start_price: this.searchForm.start_price,
-          end_price: this.searchForm.end_price
+          end_price: this.searchForm.end_price,
+          city_name: this.searchType
         }
       });
-      this.getData()
+      this.getData();
+    },
+    getPopularCity() {
+      this.axios
+        .get(
+          "http://administrator.propertybersama.com/city/get_city_based_product"
+        )
+        .then(res => {
+          this.popularCity = res.data.content;
+        });
     },
     getData() {
       this.isLoading = true;
@@ -251,7 +288,6 @@ export default {
           requestData
         )
         .then(res => {
-
           this.isLoading = false;
           this.dataList = res.data.content;
           this.record = res.data.record;
@@ -262,7 +298,6 @@ export default {
         .get("http://administrator.propertybersama.com/category/get")
         .then(res => {
           this.categoryList = res.data.content;
-          console.log(this.categoryList);
         });
     },
     capitalize(txt) {
@@ -270,12 +305,17 @@ export default {
     }
   },
   created() {
+    this.getPopularCity();
     if (this.$route.query) {
       let query = this.$route.query;
       this.searchForm.category = query.category;
       this.searchForm.start_price = query.start_price;
       this.searchForm.end_price = query.end_price;
-      this.searchForm.city = query.city
+      this.searchForm.city = query.city;
+      this.searchType = query.city_name;
+      //   return (element.id == query.city).nama
+        
+      // });
     }
     this.getData();
     this.getCategory();

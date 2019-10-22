@@ -82,6 +82,7 @@ export default {
       isLoading: false
     };
   },
+ 
   methods: {
     getArticle() {
       this.isLoading = true;
@@ -114,7 +115,7 @@ export default {
     prev() {
       this.offset -= this.limit;
       this.getData();
-    },
+    }
   },
   created() {
     this.getArticle();

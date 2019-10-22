@@ -17,7 +17,16 @@
           </div>
           <br />
           <b-field grouped>
-            <b-input placeholder="Search..." v-model="searchForm.city" expanded></b-input>
+            <b-autocomplete
+              expanded
+              v-model="searchType"
+              placeholder="Masukan Kota"
+              :data="filteredDataObj"
+              field="nama"
+              @select="option => searchForm.city = option.id"
+            >
+              <template slot="empty">No results found</template>
+            </b-autocomplete>
             <p class="control">
               <b-button type="is-primary" @click="listing()">Search</b-button>
             </p>
@@ -81,7 +90,7 @@
           :pagination-enabled="false"
         >
           <slide class="padding-slide" v-for="slide in recomended" :key="slide.id">
-            <div class="card" @click="seeDetail()">
+            <div class="card" @click="seeDetail(slide.id)">
               <div class="card-image">
                 <b-tag type="is-primary" class="cardlabel">{{slide.type}}</b-tag>
                 <figure class="image is-4by3">
@@ -101,13 +110,14 @@
                 <div class="content">
                   <p class="has-text-grey">{{slide.district+', '+slide.city}}</p>
                   <p class="title is-6">
-                    <vue-numeric
+                    <!-- <vue-numeric
                       decimal-separator="."
                       currency="Rp"
                       separator="."
                       :readOnly="true"
                       :value="slide.price"
-                    />
+                    /> -->
+                    Rp {{slide.price_word}}
                   </p>
                 </div>
               </div>
@@ -131,11 +141,10 @@
                       v-model="searchType"
                       placeholder="Masukan Kota"
                       :data="filteredDataObj"
-                      :field="searchForm.city"
+                      field="nama"
                       @select="option => searchForm.city = option.id"
                     >
                       <template slot="empty">No results found</template>
-                      <template slot-scope="props">{{ props.option.nama }}</template>
                     </b-autocomplete>
                     <p class="control">
                       <b-button type="is-primary" @click.prevent="listing()">Search</b-button>
@@ -223,8 +232,8 @@ export default {
     };
   },
   methods: {
-    seeDetail() {
-      this.$router.push("/listing/detail");
+    seeDetail(id) {
+      this.$router.push("/listing/detail/"+id);
     },
     listing() {
       this.$router.push({
@@ -233,7 +242,8 @@ export default {
           city: this.searchForm.city,
           category: this.searchForm.category,
           start_price: this.searchForm.start_price,
-          end_price: this.searchForm.end_price
+          end_price: this.searchForm.end_price,
+          city_name: this.searchType
         }
       });
     },
@@ -273,16 +283,11 @@ export default {
         .get("http://administrator.propertybersama.com/category/get")
         .then(res => {
           this.categoryList = res.data.content;
-          console.log(this.categoryList);
+          
         });
     },
     capitalize(txt) {
       return capitalizeFLetter(txt);
-    },
-    citySelected(value){
-      // this.searchForm.city = option.id 
-      // this.searchType = option.nama
-      console.log(value)
     }
   },
   computed: {

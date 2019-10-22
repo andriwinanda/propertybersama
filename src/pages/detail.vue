@@ -1,17 +1,39 @@
 <template>
   <div>
     <vueper-slides :dragging-distance="50" :slide-ratio="0.3">
-      <vueper-slide v-for="(slide, i) in slides" :key="i" :image="slide.image" :link="slide.link"></vueper-slide>
+      <vueper-slide
+        v-for="(slide, i) in content3d.photos"
+        :key="i"
+        :image="slide.thumbnail_url"
+        :link="slide.link"
+      ></vueper-slide>
     </vueper-slides>
     <div class="row">
       <div class="container is-fluid">
         <div class="columns">
           <div class="column is-8">
-            <p class="title is-4">Dijual Rumah di Komplek Murni Residence</p>
-            <p class="subtitle is-5">Medan Petisah, Kota Medan</p>
+            <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="true"></b-loading>
+            <p
+              class="title is-4"
+            >{{propertyDetail.type == 'SALE'? 'Dijual':'Disewakan' }} {{capitalize(propertyDetail.name)}}</p>
+            <p class="subtitle is-5">{{propertyDetail.district}}, {{propertyDetail.city}}</p>
           </div>
           <div class="column is-4 has-text-right">
-            <p class="title is-4">Rp 4.070.000.000,-</p>
+            <p class="title is-4">Rp {{propertyDetail.price_word}}</p>
+            <p class="subtitle is-6">
+              <span>
+                <b-icon icon="hotel" size="is-small" />
+                {{propertyDetail.room}}
+              </span>
+              <span>
+                <b-icon icon="toilet" size="is-small" />
+                {{propertyDetail.toilet}}
+              </span>
+              <span>
+                <b-icon icon="car" size="is-small" />
+                {{propertyDetail.parking}}
+              </span>
+            </p>
           </div>
         </div>
       </div>
@@ -19,29 +41,103 @@
       <div class="container is-fluid">
         <div class="columns is-multiline">
           <div class="column is-7">
-            <small>
-              *Komplek MURNI RESIDENCE*
-              <br />Jl.Bunga Melur /Jl.Pertambangan Petisah Medan
-              <br />Rumah Hunian Minimalis nyaman dan tenang untuk keluarga anda!
-              <br />Total Keseluruhan ada 8 unit dan saat ini sisa 4 unit lagi.
-              <br />1.Kav. B1, B2 dan B4
-              <br />-Uk. 6 x 15 = 90 Mtr
-              <br />-Harga Rp 460 Juta
-              <br />2.Kav. A2
-              <br />-Uk. 8 x 14 = 112 Mtr
-              <br />-Harga Rp 520 Juta
-              <br />
-            </small>
-
-            <br />
+            <!-- Desc -->
+            <h1 class="title is-5">Deskripsi</h1>
+            <small v-html="propertyDetail.description || '-'" />
+            <br/>
+            <br/>
+            <!-- Detail -->
+            <h1 class="title is-5">Detail</h1>
+            <div class="columns">
+              <div class="column is-6">
+                <table class="table is-striped is-fullwidth">
+                  <tr>
+                    <td>
+                      <small class="has-text-grey">Tipe</small>
+                      <br />
+                      {{capitalize(propertyDetail.category) }} {{propertyDetail.type == 'SALE'? 'Dijual':'Disewakan' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <small class="has-text-grey">Luas Bangunan</small>
+                      <br />
+                      {{propertyDetail.build_large || "-" }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <small class="has-text-grey">Luas Tanah</small>
+                      <br />
+                      {{propertyDetail.tanah_large || "-" }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <small class="has-text-grey">Sertifikat</small>
+                      <br />
+                      {{propertyDetail.certificate || "-" }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <small class="has-text-grey">Cluster</small>
+                      <br />
+                      {{propertyDetail.cluster || "-" }}
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="column is-6">
+                <!-- Detail -->
+                <table class="table is-stripped is-fullwidth">
+                  <tr>
+                    <td>
+                      <small class="has-text-grey">Interior</small>
+                      <br />
+                      {{propertyDetail.interior || "-"}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <small class="has-text-grey">Jumlah Lantai</small>
+                      <br />
+                      {{propertyDetail.floor || "-"}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <small class="has-text-grey">Ruang Kamar</small>
+                      <br />
+                      {{propertyDetail.room || "-"}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <small class="has-text-grey">Toilet</small>
+                      <br />
+                      {{propertyDetail.toilet || "-"}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <small class="has-text-grey">Parkir</small>
+                      <br />
+                      {{propertyDetail.parking || "-"}}
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <!-- Lokasi -->
             <p class="title is-5">Lokasi</p>
-            <div class="bg2 is-vcentered" style="height: 200px">
+            <div class="bg2 is-vcentered" style="height: 350px">
               <!-- Map Canvas -->
               <div class="mapouter">
                 <div class="gmap_canvas">
                   <iframe
                     id="gmap_canvas"
-                    src="https://maps.google.com/maps?q=Halton%20Place&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                    :src="`https://maps.google.com/maps?q=${propertyDetail.coordinate}&hl=es;z=14&amp;output=embed`"
                     frameborder="0"
                     scrolling="no"
                     marginheight="0"
@@ -59,12 +155,12 @@
             />
           </div>
           <div class="column is-12">
-            <div class="bg2 section is-vcentered" style="height: 200px">
-              <p
-                class="is-size-3 has-text-centered has-text-grey-light"
-                style="padding-top: 50px"
-              >Embeded Virtual 3D Tour</p>
-            </div>
+            <iframe
+              id="vtour"
+              :src="content3d.virtual_tours[0].primary_url"
+              frameborder="0"
+              width="100%"
+            ></iframe>
           </div>
         </div>
       </div>
@@ -74,9 +170,12 @@
 <script>
 import { VueperSlides, VueperSlide } from "vueperslides";
 import "vueperslides/dist/vueperslides.css";
+import { capitalizeFLetter } from "../functionHelper.js";
+
 export default {
   components: { VueperSlides, VueperSlide },
   data: () => ({
+    isLoading: false,
     slides: [
       {
         title: "Mountain 1",
@@ -113,32 +212,35 @@ export default {
         image:
           "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
       }
-    ]
+    ],
+    propertyDetail: null,
+    content3d: null
   }),
   methods: {
-     getData(id) {
+    getData(id) {
       this.isLoading = true;
       this.axios
-        .get(
-          `https://captur3d.io/api/v1/properties/${id}?expand=virtual_tours`,
-          {
-            headers: {
-              authorization: "Bearer I/r2Z/xEgOtyEyk/BXTEMaQ9vlrZzCmg2JJ/bGu6QgU="
-            }
-          }
-        )
+        .get(`http://administrator.propertybersama.com/product/get_by_id/${id}`)
         .then(res => {
-
           this.isLoading = false;
           // this.dataList = res.data.content;
           // this.record = res.data.record;
-          console.log(res)
+          this.propertyDetail = res.data.content;
+          this.content3d = res.data.content3d;
         });
+    },
+    capitalize(txt) {
+      return capitalizeFLetter(txt);
     }
   },
   created() {
-    let id = this.$route.params.id
-    this.getData(id)
+    let id = this.$route.params.id;
+    this.getData(id);
   }
 };
 </script>
+<style scoped>
+#vtour {
+  height: 600px !important;
+}
+</style>
