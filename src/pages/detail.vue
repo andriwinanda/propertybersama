@@ -131,7 +131,7 @@
             </div>
             <!-- Lokasi -->
             <p class="title is-5">Lokasi</p>
-            <div class="bg2 is-vcentered" style="height: 350px">
+            <div class="is-vcentered" style="height: 350px">
               <!-- Map Canvas -->
               <div class="mapouter">
                 <div class="gmap_canvas">
@@ -249,4 +249,5 @@ export default {
 #vtour {
   height: 600px !important;
 }
+
 </style>

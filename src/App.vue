@@ -36,7 +36,7 @@
             <!-- Jika ada user -->
             <div v-else class="navbar-item has-dropdown is-hoverable">
               <a class="navbar-link">Akun</a>
-              <div class="navbar-dropdown">
+              <div class="navbar-dropdown is-right">
                 <a
                   class="navbar-item"
                   v-for="item in akun"

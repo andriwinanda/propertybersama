@@ -7,7 +7,7 @@
             <b-field grouped>
               <b-autocomplete
                 expanded
-                v-model="searchType"
+                v-model="searchForm.searchType"
                 placeholder="Masukan Kota"
                 :data="filteredDataObj"
                 field="nama"
@@ -41,6 +41,76 @@
                   </b-dropdown-item>
                 </b-dropdown>
               </b-field>
+              <!-- Filter -->
+              <b-field class="control">
+                <b-dropdown
+                  aria-role="list"
+                  ref="dropdownFilter"
+                  position="is-bottom-left"
+                  toogle="closeFilter"
+                >
+                  <button class="button" type="button" slot="trigger">
+                    <b-icon icon="filter" type="is-primary"></b-icon>
+                    <span>Filter</span>
+                  </button>
+
+                  <b-dropdown-item aria-role="menu-item" :focusable="false" custom>
+                    <form action="filter">
+                      <b-field label="Type">
+                        <b-select placeholder="Select one" v-model="searchForm.type">
+                          <option value="SALE">SALE</option>
+                          <option value="RENT">RENT</option>
+                        </b-select>
+                      </b-field>
+                      <b-field grouped>
+                        <b-field label="Sertifikat">
+                          <b-select placeholder="Select one" v-model="searchForm.certificate">
+                            <option value="hak_milik">Hak Milik</option>
+                            <option value="hak_guna_bangunan">Hak Guna Bangunan</option>
+                            <option value="strata">Strata</option>
+                            <option value="girik">Girik</option>
+                            <option value="lainya">Lainya</option>
+                          </b-select>
+                        </b-field>
+                        <b-field label="Interior">
+                          <b-select placeholder="Select one" v-model="searchForm.interior">
+                            <option value="tidak_berperabot">Tidak Berperabot</option>
+                            <option value="sebagian">Sebagian</option>
+                            <option value="lengkap">Lengkap</option>
+                          </b-select>
+                        </b-field>
+                      </b-field>
+                      <b-field label="Jumlah Lantai">
+                        <b-numberinput
+                          :editable="false"
+                          min="0"
+                          v-model="searchForm.floor"
+                        ></b-numberinput>
+                      </b-field>
+                      <b-field label="Kamar Mandi">
+                        <b-numberinput
+                          :editable="false"
+                          min="0"
+                          v-model="searchForm.toilet"
+                        ></b-numberinput>
+                      </b-field>
+                      <b-field label="Kamar Tidur">
+                        <b-numberinput
+                          :editable="false"
+                          min="0"
+                          v-model="searchForm.room"
+                        ></b-numberinput>
+                      </b-field>
+
+                      <br />
+                      <b-field horizontal>
+                        <b-button class="is-fullwidth" type="reset" @click.prevent="reset()">Reset</b-button>
+                        <b-button class="is-fullwidth" type="is-primary" @click="filter()">Filter</b-button>
+                      </b-field>
+                    </form>
+                  </b-dropdown-item>
+                </b-dropdown>
+              </b-field>
 
               <b-field class="control">
                 <b-button type="is-primary" @click.prevent="search()">Search</b-button>
@@ -57,6 +127,7 @@
     </div>
     <div class="row section listing">
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="true"></b-loading>
+
       <div class="container is-fluid">
         <!-- <div class="columns is-vcentered is-multiline">
           <div class="column">
@@ -79,6 +150,10 @@
         <template v-if="!mapView">
           <br />
           <p class="has-text-primary is-size-5 title">{{record}} Properti Ditemukan Untuk Anda</p>
+          <div v-if="!dataList && !isLoading" class="container is-fluid not-found">
+            <h1 class="title is-1 has-text-grey">&#128549;</h1>
+            <p class="subtitle is-6">Properti Tidak Ditemukan</p>
+          </div>
           <div class="columns is-multiline">
             <div class="column is-3" v-for="slide in dataList" :key="slide.id">
               <div class="card" @click="seeDetail(slide.id)">
@@ -107,7 +182,7 @@
                         separator="."
                         :readOnly="true"
                         :value="slide.price"
-                      /> -->
+                      />-->
                       Rp {{slide.price_word}}
                     </p>
                   </div>
@@ -168,7 +243,7 @@
                               separator="."
                               :readOnly="true"
                               :value="slide.price"
-                            /> -->
+                            />-->
                             Rp {{slide.price_word}}
                           </p>
                         </div>
@@ -222,10 +297,15 @@ export default {
         type: "",
         category: "",
         start_price: null,
-        end_price: null
+        end_price: null,
+        room: 0,
+        toilet: 0,
+        certificate: "",
+        interior: 0,
+        floor: 0,
+        searchType: ""
       },
       popularCity: [],
-      searchType: "",
       record: 0,
       offset: 0,
       limit: 10
@@ -238,14 +318,14 @@ export default {
           option.nama
             .toString()
             .toLowerCase()
-            .indexOf(this.searchType) >= 0
+            .indexOf(this.searchForm.searchType) >= 0
         );
       });
     }
   },
   methods: {
     seeDetail(id) {
-      this.$router.push("/listing/detail/"+id);
+      this.$router.push("/listing/detail/" + id);
     },
     next() {
       this.offset += this.limit;
@@ -256,17 +336,23 @@ export default {
       this.getData();
     },
     search() {
-      if(!this.searchType) this.searchForm.city = ""
+      if (!this.searchForm.searchType) this.searchForm.city = "";
       this.$router.replace({
-        query: {
-          city: this.searchForm.city,
-          category: this.searchForm.category,
-          start_price: this.searchForm.start_price,
-          end_price: this.searchForm.end_price,
-          city_name: this.searchType
-        }
+        query: this.searchForm
       });
       this.getData();
+    },
+    filter() {
+      this.search();
+      this.$refs.dropdownFilter.toggle();
+    },
+    reset() {
+      this.searchForm.room = 0;
+      this.searchForm.toilet = 0;
+      this.searchForm.certificate = "";
+      this.searchForm.type = "";
+      this.searchForm.interior = "";
+      this.searchForm.floor = 0;
     },
     getPopularCity() {
       this.axios
@@ -312,9 +398,9 @@ export default {
       this.searchForm.start_price = query.start_price;
       this.searchForm.end_price = query.end_price;
       this.searchForm.city = query.city;
-      this.searchType = query.city_name;
+      this.searchForm.searchType = query.city_name;
       //   return (element.id == query.city).nama
-        
+
       // });
     }
     this.getData();
@@ -348,5 +434,10 @@ export default {
   max-height: 100vh;
   width: 57.2% !important;
   overflow-x: auto;
+}
+.not-found {
+  text-align: center;
+  padding-top: 6rem;
+  min-height: 60vh;
 }
 </style>
