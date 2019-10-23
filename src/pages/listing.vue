@@ -56,53 +56,47 @@
 
                   <b-dropdown-item aria-role="menu-item" :focusable="false" custom>
                     <form action="filter">
-                      <b-field label="Type">
-                        <b-select placeholder="Select one" v-model="searchForm.type">
-                          <option value="SALE">SALE</option>
-                          <option value="RENT">RENT</option>
-                        </b-select>
-                      </b-field>
-                      <b-field grouped>
-                        <b-field label="Sertifikat">
-                          <b-select placeholder="Select one" v-model="searchForm.certificate">
-                            <option value="hak_milik">Hak Milik</option>
-                            <option value="hak_guna_bangunan">Hak Guna Bangunan</option>
-                            <option value="strata">Strata</option>
-                            <option value="girik">Girik</option>
-                            <option value="lainya">Lainya</option>
-                          </b-select>
-                        </b-field>
-                        <b-field label="Interior">
-                          <b-select placeholder="Select one" v-model="searchForm.interior">
-                            <option value="tidak_berperabot">Tidak Berperabot</option>
-                            <option value="sebagian">Sebagian</option>
-                            <option value="lengkap">Lengkap</option>
-                          </b-select>
-                        </b-field>
-                      </b-field>
-                      <b-field label="Jumlah Lantai">
-                        <b-numberinput
-                          :editable="false"
-                          min="0"
-                          v-model="searchForm.floor"
-                        ></b-numberinput>
-                      </b-field>
-                      <b-field label="Kamar Mandi">
-                        <b-numberinput
-                          :editable="false"
-                          min="0"
-                          v-model="searchForm.toilet"
-                        ></b-numberinput>
-                      </b-field>
-                      <b-field label="Kamar Tidur">
-                        <b-numberinput
-                          :editable="false"
-                          min="0"
-                          v-model="searchForm.room"
-                        ></b-numberinput>
-                      </b-field>
-
-                      <br />
+                      <div class="columns">
+                        <div class="column is-6">
+                          <b-field label="Type">
+                            <b-select placeholder="Select one" v-model="searchForm.type">
+                              <option value>Apapun</option>
+                              <option value="SALE">Dijual</option>
+                              <option value="RENT">Disewakan</option>
+                            </b-select>
+                          </b-field>
+                          <b-field label="Sertifikat">
+                            <b-select placeholder="Select one" v-model="searchForm.certificate">
+                              <option value>Apapun</option>
+                              <option value="hak_milik">Hak Milik</option>
+                              <option value="hak_guna_bangunan">Hak Guna Bangunan</option>
+                              <option value="strata">Strata</option>
+                              <option value="girik">Girik</option>
+                              <option value="lainya">Lainya</option>
+                            </b-select>
+                          </b-field>
+                          <b-field label="Interior">
+                            <b-select placeholder="Select one" v-model="searchForm.interior">
+                              <option value>Apapun</option>
+                              <option value="tidak_berperabot">Tidak Berperabot</option>
+                              <option value="sebagian">Sebagian</option>
+                              <option value="lengkap">Lengkap</option>
+                            </b-select>
+                          </b-field>
+                        </div>
+                        <div class="column is-6">
+                          <b-field label="Jumlah Lantai">
+                            <b-numberinput :editable="false" min="  0" v-model="searchForm.floor"></b-numberinput>
+                          </b-field>
+                          <b-field label="Kamar Mandi">
+                            <b-numberinput :editable="false" min="0" v-model="searchForm.toilet"></b-numberinput>
+                          </b-field>
+                          <b-field label="Kamar Tidur">
+                            <b-numberinput :editable="false" min="0" v-model="searchForm.room"></b-numberinput>
+                          </b-field>
+                          <span />
+                        </div>
+                      </div>
                       <b-field horizontal>
                         <b-button class="is-fullwidth" type="reset" @click.prevent="reset()">Reset</b-button>
                         <b-button class="is-fullwidth" type="is-primary" @click="filter()">Filter</b-button>
@@ -301,7 +295,7 @@ export default {
         room: 0,
         toilet: 0,
         certificate: "",
-        interior: 0,
+        interior: "",
         floor: 0,
         searchType: ""
       },
