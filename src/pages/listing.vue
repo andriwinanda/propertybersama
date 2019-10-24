@@ -16,28 +16,72 @@
                 <template slot="empty">No results found</template>
               </b-autocomplete>
               <b-select v-model="searchForm.category" placeholder="Category">
-                <option value>Semua</option>
+                <option value>Semua Kategori</option>
                 <option
                   v-for="category in categoryList"
                   :value="category.id"
                   :key="category.id"
                 >{{ capitalize(category.name) }}</option>
               </b-select>
-              <b-field class="control">
-                <b-dropdown aria-role="list">
+              <b-field>
+                <b-dropdown aria-role="menu" position="is-bottom-left">
                   <button class="button" type="button" slot="trigger">
-                    <span v-if="!searchForm.start_price && !searchForm.end_price">Harga</span>
+                    <span v-if="lockMinMax">Semua Harga</span>
                     <span v-else>Rp {{searchForm.start_price +" - "+searchForm.end_price}}</span>
                     <b-icon icon="menu-down"></b-icon>
                   </button>
+                  <!-- <b-dropdown-item aria-role="menu-item" :focusable="false" custom paddingless>
+                    <form action>
+                      <div class="modal-card" style="width:300px;">
+                        <section class="modal-card-body">
+                          <b-field label="Email">
+                            <b-input type="email" placeholder="Your email" required></b-input>
+                          </b-field>
+
+                          <b-field label="Password">
+                            <b-input
+                              type="password"
+                              password-reveal
+                              placeholder="Your password"
+                              required
+                            ></b-input>
+                          </b-field>
+
+                          <b-checkbox>Remember me</b-checkbox>
+                        </section>
+                        <footer class="modal-card-foot">
+                          <button class="button is-primary">Login</button>
+                        </footer>
+                      </div>
+                    </form>
+                  </b-dropdown-item>-->
 
                   <b-dropdown-item aria-role="menu-item" :focusable="false" custom>
-                    <b-field class="rangePrice">
-                      <b-input placeholder="Min" v-model="searchForm.start_price" type="number"></b-input>
-                    </b-field>
-                    <b-field class="rangePrice">
-                      <b-input placeholder="Max" v-model="searchForm.end_price" type="number"></b-input>
-                    </b-field>
+                    <div  style="width:250px;">
+                      <b-field>
+                        <b-input
+                          placeholder="Min"
+                          :disabled="lockMinMax"
+                          v-model="searchForm.start_price"
+                          type="number"
+                        ></b-input>
+                      </b-field>
+                      <b-field>
+                        <b-input 
+                          placeholder="Max"
+                          :disabled="lockMinMax"
+                          v-model="searchForm.end_price"
+                          type="number"
+                        ></b-input>
+                      </b-field>
+                      <b-field>
+                        <b-checkbox
+                          :true-value="true"
+                          :false-value="false"
+                          v-model="lockMinMax"
+                        >Semua Harga</b-checkbox>
+                      </b-field>
+                    </div>
                   </b-dropdown-item>
                 </b-dropdown>
               </b-field>
@@ -86,7 +130,7 @@
                         </div>
                         <div class="column is-6">
                           <b-field label="Jumlah Lantai">
-                            <b-numberinput :editable="false" min="  0" v-model="searchForm.floor"></b-numberinput>
+                            <b-numberinput :editable="false" min="0" v-model="searchForm.floor"></b-numberinput>
                           </b-field>
                           <b-field label="Kamar Mandi">
                             <b-numberinput :editable="false" min="0" v-model="searchForm.toilet"></b-numberinput>
@@ -283,6 +327,7 @@ export default {
     return {
       mapView: false,
       isLoading: false,
+      lockMinMax: false,
       dataList: [],
       categoryList: [],
       searchForm: {
@@ -290,8 +335,8 @@ export default {
         city: "",
         type: "",
         category: "",
-        start_price: null,
-        end_price: null,
+        start_price: "",
+        end_price: "",
         room: 0,
         toilet: 0,
         certificate: "",
@@ -300,6 +345,7 @@ export default {
         searchType: ""
       },
       popularCity: [],
+      cityList: [],
       record: 0,
       offset: 0,
       limit: 10
@@ -307,14 +353,16 @@ export default {
   },
   computed: {
     filteredDataObj() {
-      return this.popularCity.filter(option => {
-        return (
-          option.nama
-            .toString()
-            .toLowerCase()
-            .indexOf(this.searchForm.searchType) >= 0
-        );
-      });
+      if (this.searchForm.searchType) {
+        return this.cityList.filter(option => {
+          return (
+            option.nama
+              .toString()
+              .toLowerCase()
+              .indexOf(this.searchForm.searchType.toLowerCase()) >= 0
+          );
+        });
+      }
     }
   },
   methods: {
@@ -330,6 +378,10 @@ export default {
       this.getData();
     },
     search() {
+      if (this.lockMinMax) {
+        this.searchForm.start_price = "";
+        this.searchForm.end_price = "";
+      }
       if (!this.searchForm.searchType) this.searchForm.city = "";
       this.$router.replace({
         query: this.searchForm
@@ -355,6 +407,13 @@ export default {
         )
         .then(res => {
           this.popularCity = res.data.content;
+        });
+    },
+    getCity() {
+      this.axios
+        .get("http://administrator.propertybersama.com/city/get_city")
+        .then(res => {
+          this.cityList = res.data.content;
         });
     },
     getData() {
@@ -385,6 +444,7 @@ export default {
     }
   },
   created() {
+    this.getCity();
     this.getPopularCity();
     if (this.$route.query) {
       let query = this.$route.query;
@@ -392,7 +452,9 @@ export default {
       this.searchForm.start_price = query.start_price;
       this.searchForm.end_price = query.end_price;
       this.searchForm.city = query.city;
+      this.searchForm.room = query.room;
       this.searchForm.searchType = query.city_name;
+      if (!query.start_price && !query.end_price) this.lockMinMax = true;
       //   return (element.id == query.city).nama
 
       // });

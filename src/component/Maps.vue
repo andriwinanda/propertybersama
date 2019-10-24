@@ -5,7 +5,7 @@
 import GoogleMapsLoader from "google-maps";
 export default {
   name: "google-map",
-  props: ["name"],
+  props: ["name", "markerCoordinates"],
   data() {
     return {
       key: "AIzaSyBrwH84_R7syzRNb1xQw60npKYK7Gsa2es",

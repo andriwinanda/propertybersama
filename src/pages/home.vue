@@ -33,12 +33,21 @@
           </b-field>
           <b-field grouped>
             <b-select v-model="searchForm.category" placeholder="Category">
-              <option value>Semua</option>
+              <option value>Semua Kategori</option>
               <option
                 v-for="category in categoryList"
                 :value="category.id"
                 :key="category.id"
               >{{ capitalize(category.name) }}</option>
+            </b-select>
+            <b-select v-model="searchForm.room" placeholder="Kamar Tidur">
+              <option value>Semua Kamar Tidur</option>
+              <option value="1">1 Kamar</option>
+              <option value="2">2 Kamar</option>
+              <option value="3">3 Kamar</option>
+              <option value="4">4 Kamar</option>
+              <option value="5">5 Kamar</option>
+              <option value="6">6+ Kamar</option>
             </b-select>
 
             <!-- <b-select v-model="searchForm.price">
@@ -46,17 +55,35 @@
             </b-select>-->
             <b-dropdown aria-role="list">
               <button class="button" type="button" slot="trigger">
-                <span v-if="!searchForm.start_price && !searchForm.end_price">Harga</span>
+                <span v-if="lockMinMax">Semua Harga</span>
                 <span v-else>Rp {{searchForm.start_price +" - "+searchForm.end_price}}</span>
                 <b-icon icon="menu-down"></b-icon>
               </button>
 
               <b-dropdown-item aria-role="menu-item" :focusable="false" custom>
-                <b-field class="rangePrice">
-                  <b-input placeholder="Min" v-model="searchForm.start_price" type="number"></b-input>
+                <br />
+                <b-field horizontal label="Min" class="rangePrice">
+                  <b-input
+                    placeholder="Min"
+                    :disabled="lockMinMax"
+                    v-model="searchForm.start_price"
+                    type="number"
+                  ></b-input>
                 </b-field>
-                <b-field class="rangePrice">
-                  <b-input placeholder="Max" v-model="searchForm.end_price" type="number"></b-input>
+                <b-field horizontal label="Max" class="rangePrice">
+                  <b-input
+                    placeholder="Max"
+                    :disabled="lockMinMax"
+                    v-model="searchForm.end_price"
+                    type="number"
+                  ></b-input>
+                </b-field>
+                <b-field>
+                  <b-checkbox
+                    :true-value="true"
+                    :false-value="false"
+                    v-model="lockMinMax"
+                  >Semua Harga</b-checkbox>
                 </b-field>
               </b-dropdown-item>
             </b-dropdown>
@@ -116,7 +143,7 @@
                       separator="."
                       :readOnly="true"
                       :value="slide.price"
-                    /> -->
+                    />-->
                     Rp {{slide.price_word}}
                   </p>
                 </div>
@@ -158,7 +185,7 @@
                       class="button"
                       v-for="city in popularCity"
                       :key="city.id"
-                      @click="listingByCity(city.id)"
+                      @click="listingByCity(city.id, city.nama)"
                     >{{city.nama}}</span>
                     <!-- <span class="button" @click="listing()">Jakarta Selatan</span>
                     <span class="button" @click="listing()">Surabaya</span>
@@ -177,7 +204,7 @@
                     <div class="gmap_canvas">
                       <iframe
                         id="gmap_canvas"
-                        src="https://maps.google.com/maps?q=Halton%20Place&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                        :src="`https://maps.google.com/maps?q=${propertyBersama.coordinate}&hl=es;z=14&amp;output=embed`"
                         frameborder="0"
                         scrolling="no"
                         marginheight="0"
@@ -207,6 +234,28 @@ export default {
   },
   data() {
     return {
+      lockMinMax: false,
+      propertyBersama: {
+        id: "1",
+        name: "Property Bersama - Property Listing",
+        address: "jl. T. Amir Hamzah B-18\nGriya Riatur\n",
+        coordinate: "3.610273,98.647739",
+        phone1: "08520000000",
+        phone2: "0-0",
+        email: "info@propertybersama.com",
+        billing_email: "info@propertybersama.com",
+        technical_email: "info@propertybersama.com",
+        cc_email: "info@propertybersama.com",
+        zip: "20124",
+        account_name: "SS",
+        account_no: "105-000-000000-0",
+        bank: "Unknow",
+        city: "Medan",
+        site_name: "www.propertybersama.com",
+        meta_description: "Property Listing",
+        meta_keyword: "Property Listing",
+        logo: "logo.6bb21a2_.png"
+      },
       categoryList: [
         // { id: "", name: "Semua" },
         // { id: "rumah", name: "Rumah" },
@@ -223,32 +272,42 @@ export default {
         city: "",
         type: "",
         category: "",
+        room: "",
         start_price: 0,
         end_price: 500000000
       },
       searchType: "",
       popularCity: [],
+      cityList: [],
       recomended: []
     };
   },
   methods: {
     seeDetail(id) {
-      this.$router.push("/listing/detail/"+id);
+      this.$router.push("/listing/detail/" + id);
     },
     listing() {
+      let queryData = {
+        city: this.searchForm.city,
+        category: this.searchForm.category,
+        start_price: this.searchForm.start_price,
+        end_price: this.searchForm.end_price,
+        city_name: this.searchType
+      };
+      if (this.lockMinMax) {
+        queryData.start_price = "";
+        queryData.end_price = "";
+      }
+      if (this.searchForm.room) queryData.room = this.searchForm.room;
+
       this.$router.push({
         path: "/listing",
-        query: {
-          city: this.searchForm.city,
-          category: this.searchForm.category,
-          start_price: this.searchForm.start_price,
-          end_price: this.searchForm.end_price,
-          city_name: this.searchType
-        }
+        query: queryData
       });
     },
-    listingByCity(id) {
+    listingByCity(id, name) {
       this.searchForm.city = id;
+      this.searchType = name;
       this.listing();
     },
     getRecomendation() {
@@ -278,12 +337,18 @@ export default {
           this.popularCity = res.data.content;
         });
     },
+    getCity() {
+      this.axios
+        .get("http://administrator.propertybersama.com/city/get_city")
+        .then(res => {
+          this.cityList = res.data.content;
+        });
+    },
     getCategory() {
       this.axios
         .get("http://administrator.propertybersama.com/category/get")
         .then(res => {
           this.categoryList = res.data.content;
-          
         });
     },
     capitalize(txt) {
@@ -292,19 +357,22 @@ export default {
   },
   computed: {
     filteredDataObj() {
-      return this.popularCity.filter(option => {
-        return (
-          option.nama
-            .toString()
-            .toLowerCase()
-            .indexOf(this.searchType) >= 0
-        );
-      });
+      if (this.searchType) {
+        return this.cityList.filter(option => {
+          return (
+            option.nama
+              .toString()
+              .toLowerCase()
+              .indexOf(this.searchType.toLowerCase()) >= 0
+          );
+        });
+      }
     }
   },
   created() {
     this.getRecomendation();
     this.getPopularCity();
+    this.getCity();
     this.getCategory();
   }
 };
