@@ -30,34 +30,9 @@
                     <span v-else>Rp {{searchForm.start_price +" - "+searchForm.end_price}}</span>
                     <b-icon icon="menu-down"></b-icon>
                   </button>
-                  <!-- <b-dropdown-item aria-role="menu-item" :focusable="false" custom paddingless>
-                    <form action>
-                      <div class="modal-card" style="width:300px;">
-                        <section class="modal-card-body">
-                          <b-field label="Email">
-                            <b-input type="email" placeholder="Your email" required></b-input>
-                          </b-field>
-
-                          <b-field label="Password">
-                            <b-input
-                              type="password"
-                              password-reveal
-                              placeholder="Your password"
-                              required
-                            ></b-input>
-                          </b-field>
-
-                          <b-checkbox>Remember me</b-checkbox>
-                        </section>
-                        <footer class="modal-card-foot">
-                          <button class="button is-primary">Login</button>
-                        </footer>
-                      </div>
-                    </form>
-                  </b-dropdown-item>-->
 
                   <b-dropdown-item aria-role="menu-item" :focusable="false" custom>
-                    <div  style="width:250px;">
+                    <div style="width:250px;">
                       <b-field>
                         <b-input
                           placeholder="Min"
@@ -67,7 +42,7 @@
                         ></b-input>
                       </b-field>
                       <b-field>
-                        <b-input 
+                        <b-input
                           placeholder="Max"
                           :disabled="lockMinMax"
                           v-model="searchForm.end_price"
@@ -274,16 +249,7 @@
                           <p class="subtitle is-6 has-text-grey">
                             <small>{{slide.district+", " +slide.city}}</small>
                           </p>
-                          <p class="title is-6">
-                            <!-- <vue-numeric
-                              decimal-separator="."
-                              currency="Rp"
-                              separator="."
-                              :readOnly="true"
-                              :value="slide.price"
-                            />-->
-                            Rp {{slide.price_word}}
-                          </p>
+                          <p class="title is-6">Rp {{slide.price_word}}</p>
                         </div>
                       </div>
                     </div>
@@ -306,7 +272,7 @@
                     ></iframe>
                   </div>
                 </div>-->
-                <google-map name="example"></google-map>
+                <google-map v-if="!isLoading" :markerCoordinates="markerCoordinates" name="example"></google-map>
               </div>
             </div>
           </div>
@@ -348,7 +314,24 @@ export default {
       cityList: [],
       record: 0,
       offset: 0,
-      limit: 10
+      limit: 10,
+      markerCoordinates: [
+        // {
+        //   latitude: 51.501527,
+        //   longitude: -0.1921837,
+        //   price: 6600000
+        // },
+        // {
+        //   latitude: 51.505874,
+        //   longitude: -0.1838486,
+        //   price: 5800000
+        // },
+        // {
+        //   latitude: 51.4998973,
+        //   longitude: -0.202432,
+        //   price: 1000000
+        // }
+      ]
     };
   },
   computed: {
@@ -418,6 +401,7 @@ export default {
     },
     getData() {
       this.isLoading = true;
+      this.markerCoordinates = [];
       let requestData = this.searchForm;
       requestData.offset = this.offset;
       requestData.limit = this.limit;
@@ -430,6 +414,21 @@ export default {
           this.isLoading = false;
           this.dataList = res.data.content;
           this.record = res.data.record;
+          res.data.content.map(el => {
+            let mapContent = {};
+            if (el.coordinate) {
+              mapContent.id = el.id;
+              mapContent.name = el.name;
+              mapContent.district = el.district;
+              mapContent.city = el.city;
+              mapContent.image = el.image;
+              let coordinate = el.coordinate.split(",");
+              mapContent.latitude = parseFloat(coordinate[0]);
+              mapContent.longitude = parseFloat(coordinate[1]);
+              mapContent.price = el.price_word;
+              this.markerCoordinates.push(mapContent);
+            }
+          });
         });
     },
     getCategory() {
@@ -466,14 +465,13 @@ export default {
 </script>
 <style scoped>
 .fixed {
-  z-index: 3;
-  position: fixed;
+  /* position: fixed;
   display: block;
   height: auto;
-  width: 100%;
+  width: 100%; */
   /* right: 0px;
   top: 0px; */
-  touch-action: pan-x pan-y;
+  /* touch-action: pan-x pan-y; */
   /* background-color: aquamarine; */
 }
 .listing {
