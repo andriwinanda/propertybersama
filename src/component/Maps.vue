@@ -9,7 +9,7 @@ export default {
   props: ["name", "markerCoordinates"],
   data() {
     return {
-      key: "AIzaSyBrwH84_R7syzRNb1xQw60npKYK7Gsa2es",
+      key: "AIzaSyB6jDL-cSc8H0pa8MnHwh1U9c_5MEKwmfA",
       mapName: this.name + "-map",
       // markerCoordinates: [
       //   {
@@ -85,7 +85,7 @@ export default {
                           <div>
                           <span class="title is-6">
                             Rp ${coord.price} </span>
-                            <a href="/listing/detail/${coord.id}" target="_blank">Detail »</a>
+                            <a style="padding-left: 3px;" href="/listing/detail/${coord.id}" target="_blank">Detail »</a>
                           </div>
                         </div>
                       </div>`);

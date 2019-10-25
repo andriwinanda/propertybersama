@@ -1,6 +1,6 @@
 <template>
   <div class="bg2">
-    <div class="bg4 section fixed">
+    <div class="bg4 filter-fixed">
       <div class="container is-fluid">
         <div class="columns is-vcentered">
           <div class="column is-10">
@@ -23,7 +23,7 @@
                   :key="category.id"
                 >{{ capitalize(category.name) }}</option>
               </b-select>
-              <b-field>
+              <b-field class="control">
                 <b-dropdown aria-role="menu" position="is-bottom-left">
                   <button class="button" type="button" slot="trigger">
                     <span v-if="lockMinMax">Semua Harga</span>
@@ -125,7 +125,7 @@
                 </b-dropdown>
               </b-field>
 
-              <b-field class="control">
+              <b-field>
                 <b-button type="is-primary" @click.prevent="search()">Search</b-button>
               </b-field>
             </b-field>
@@ -138,7 +138,7 @@
         </div>
       </div>
     </div>
-    <div class="row section listing">
+    <div class=" listing">
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="true"></b-loading>
 
       <div class="container is-fluid">
@@ -279,6 +279,9 @@
         </template>
       </div>
     </div>
+
+    <!-- Filter -->
+    
   </div>
 </template>
 <script>
@@ -465,14 +468,20 @@ export default {
 </script>
 <style scoped>
 .fixed {
-  /* position: fixed;
-  display: block;
+  position: fixed;
   height: auto;
-  width: 100%; */
+  width: 100%;
   /* right: 0px;
-  top: 0px; */
-  /* touch-action: pan-x pan-y; */
-  /* background-color: aquamarine; */
+  top: 60px; */
+  touch-action: pan-x pan-y;
+  /* background-color: aquamarine;*/
+}
+.filter-fixed{
+  position: fixed;
+  height: auto;
+  width: 100%;
+  z-index: 100;
+  border-top: 1px solid #dcdcdc57
 }
 .listing {
   padding-top: 4.3rem;
