@@ -24,7 +24,7 @@
         <hr />
         <div class="columns is-multiline">
           <div class="column is-3" v-for="article in articleList" :key="article.id">
-            <div class="card" @click="readMore(article.id)">
+            <div class="card" @click="readMore(article.permalink)">
               <div class="card-image">
                 <figure class="image is-4by3">
                   <img :src="article.image" alt="Property Bersama" />
@@ -42,7 +42,7 @@
                   <b-button
                     type="is-primary"
                     class="is-fullwidth"
-                    @click.prevent="readMore(article.id)"
+                    @click.prevent="readMore(article.permalink)"
                   >Baca Selengkapnya</b-button>
                 </div>
               </div>

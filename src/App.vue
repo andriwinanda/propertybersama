@@ -132,16 +132,6 @@
               </ul>
             </a>
           </div>
-          <div class="column">
-            <p class="title is-5">Tersedia di</p>
-            <a>
-              <img width="150" src="../static/img/playstore.svg" />
-            </a>
-            <br />
-            <a>
-              <img width="150" src="../static/img/appstore.svg" />
-            </a>
-          </div>
         </div>
         <div class="is-divider"></div>
         <p class="copyright">© Property Bersama. All right reserved</p>
@@ -175,8 +165,8 @@ export default {
           link: "/deals"
         },
         {
-          title: "Artikel",
-          link: "/artikel"
+          title: "Berita Properti",
+          link: "/berita"
         }
       ],
       akun: [

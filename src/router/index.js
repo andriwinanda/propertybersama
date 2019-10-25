@@ -8,7 +8,7 @@ import Detail from '@/pages/detail'
 import Listing from '@/pages/listing'
 import Artikel from '@/pages/artikel'
 import ArtikelDetail from '@/pages/artikel-detail'
-import BeritaProperti from '@/pages/berita-properti'
+// import BeritaProperti from '@/pages/berita-properti'
 
 import Dashboard from '@/pages/dashboard'
 import EditProfile from '@/pages/edit-profile'
@@ -50,16 +50,12 @@ const router = new Router({
       component: Detail
     },
     {
-      path: '/artikel',
-      component: Artikel
-    },
-    {
-      path: '/artikel-detail/:id',
+      path: '/artikel-detail/:permalink',
       component: ArtikelDetail
     },
     {
       path: '/berita',
-      component: BeritaProperti
+      component: Artikel
     },
 
     {

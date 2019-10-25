@@ -44,7 +44,7 @@
               <br />
               <span v-html="(artikel.text).substring(0,100)+'...'"></span>
               <small>
-                <a class="has-text-link" @click="artikel_detail(artikel.id)">Baca Selengkapnya »</a>
+                <a class="has-text-link" @click="artikel_detail(artikel.permalink)">Baca Selengkapnya »</a>
               </small>
             </p>
           </div>
@@ -74,16 +74,17 @@ export default {
     };
   },
   methods: {
-    artikel_detail(id) {
-      this.$router.push(id);
+    artikel_detail(permalink) {
+      this.$router.push(permalink);
       this.get_article();
     },
     get_article() {
+      this.content = null
       // Full Artickel
       this.isLoading = true;
-      let id = this.$route.params.id;
+      let permalink = this.$route.params.permalink;
       this.axios
-        .post("http://administrator.propertybersama.com/article/get_article", {id: id})
+        .post("http://administrator.propertybersama.com/article/get_article_by_permalink", {permalink: permalink})
         .then(res => {
           // this.artikel = res.data.content;
           this.content = res.data.content[0];
@@ -121,7 +122,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .gallery .vueperslide {
   border: 2px solid white;
 }
