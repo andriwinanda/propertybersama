@@ -171,16 +171,8 @@ export default {
       ],
       akun: [
         {
-          title: "Dashboard",
-          link: "/dashboard"
-        },
-        {
-          title: "Edit Profile",
-          link: "/edit-profile"
-        },
-        {
-          title: "Ganti Password",
-          link: "/ganti-password"
+          title: "Profile",
+          link: "/profile"
         }
       ]
     };

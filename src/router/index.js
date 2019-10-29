@@ -59,7 +59,7 @@ const router = new Router({
     },
 
     {
-      path: '/dashboard',
+      path: '/profile',
       component: Dashboard
     },
     

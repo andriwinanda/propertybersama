@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="hero is-info">
+    <section class="hero">
       <div class="hero-body is-gapless">
         <div class="container is-fluid">
           <div class="columns is-variable is-2 is-mobile is-vcentered is-centered">
@@ -8,21 +8,15 @@
               <figure class="image">
                 <img
                   class="is-rounded"
-                  :src="profile_img?profile_img:'https://www.sejasa.com/assets/icons/profile_pic-9f51819994c099de0ac9fee7b3f9bb341d7181d5af9eb33ec4fc7fc98b9bbb95.png'"
+                  :src="profile.image || 'https://www.sejasa.com/assets/icons/profile_pic-9f51819994c099de0ac9fee7b3f9bb341d7181d5af9eb33ec4fc7fc98b9bbb95.png'"
                 />
               </figure>
             </div>
             <div class="column is-8-desktop is-8-mobile is-5-tablet">
               <div class="columns is-gapless is-multiline is-vcentered">
                 <div class="column is-12-mobile is-6-desktop">
-                  <p class="nama-user is-size-4-mobile is-size-2-desktop">Andri Winanda</p>
-                  <p class="email-user is-size-6-mobile is-size-5-desktop">andriwinanda1@gmail.com</p>
-                </div>
-                <div class="column is-12-mobile is-2-desktop add-margin-top">
-                  <router-link
-                    class="button is-fullwidth is-small add-margin-top"
-                    to="/edit-profile"
-                  >Edit Profile</router-link>
+                  <p class="nama-user has-text-white is-size-4-mobile is-size-2-desktop">{{profile.first_name}} {{profile.last_name}}</p>
+                  <p class="email-user has-text-white is-size-6-mobile is-size-5-desktop">{{profile.email}}</p>
                 </div>
               </div>
             </div>
@@ -36,14 +30,14 @@
       <div class="container is-fluid floating">
         <div class="columns">
           <div class="column is-8">
-            <div class="box dashboard">
+            <!-- <div class="box dashboard">
               <nav class="level is-mobile">Selamat Datang</nav>
             </div>
 
-            <br />
+            <br /> -->
 
             <div class="request box">
-              <p class="title is-4 has-text-white">Semua Prpperti</p>
+              <p class="title is-4 has-text-white">Semua Properti</p>
               <div class="is-divider no-martop"></div>
 
               <a class="box" v-for="(data, key) in request" :key="key">
@@ -77,7 +71,7 @@
                   <div class="media-content">
                     <div class="content">
                       <p class="title is-6">Email :</p>
-                      <p class="subtitle is-6 overflow">andriwinanda1@gmail.com</p>
+                      <p class="subtitle is-6 overflow">{{profile.email}}</p>
                     </div>
                   </div>
                 </article>
@@ -88,7 +82,7 @@
                   <div class="media-content">
                     <div class="content">
                       <p class="title is-6">Handphone :</p>
-                      <p class="subtitle is-6 overflow">+62831 6545 xxxx</p>
+                      <p class="subtitle is-6 overflow">{{profile.phone}}</p>
                     </div>
                   </div>
                 </article>
@@ -98,8 +92,8 @@
                   </div>
                   <div class="media-content">
                     <div class="content">
-                      <p class="title is-6">Default Location :</p>
-                      <p class="subtitle is-6 overflow">Sumatera Utara</p>
+                      <p class="title is-6">Address :</p>
+                      <p class="subtitle is-6 overflow">{{profile.address}}</p>
                     </div>
                   </div>
                 </article>
@@ -112,9 +106,11 @@
   </div>
 </template>
 <script>
+import { getToken } from '../localstorage-helper'
 export default {
   data() {
     return {
+      profile: {},
       profile_img:
         "https://assets.gitlab-static.net/uploads/-/system/user/avatar/3465364/avatar.png?width=90",
       request: [
@@ -124,7 +120,7 @@ export default {
           date: "04-04-2019",
           lokasi: "Medan",
           label: "is-warning",
-          status: "Pending"
+          status: "Publish"
         },
         {
           _id: "",
@@ -132,7 +128,7 @@ export default {
           date: "04-04-2019",
           lokasi: "Medan",
           label: "is-success",
-          status: "Done"
+          status: "Unpublish"
         },
         {
           _id: "",
@@ -140,10 +136,26 @@ export default {
           date: "04-04-2019",
           lokasi: "Nusa Tenggara Barat",
           label: "is-warning",
-          status: "Pending"
+          status: "Publish"
         }
       ]
     };
+  },
+  methods: {
+    getProfile() {
+      this.axios
+        .get("http://administrator.propertybersama.com/member/detail", {
+          headers: {
+            'X-Auth-Token': getToken()
+          }
+        })
+        .then(res => {
+          this.profile = res.data.content;
+        });
+    },
+  },
+  created() {
+    this.getProfile()
   }
 };
 </script>
@@ -152,14 +164,14 @@ export default {
 <style scoped>
 /* @import url('../assets/css/style.scss'); */
 .hero {
-  background: linear-gradient(141deg, #e4b015 0, #bd9210 80%);
+  background: linear-gradient(150deg, #434343, #000000);
 }
 .bg2 {
   padding-bottom: 0 !important;
 }
 .floating {
   position: relative;
-  top: -7rem;
+  top: -5rem;
 }
 .dashboard {
   margin-bottom: 0;
