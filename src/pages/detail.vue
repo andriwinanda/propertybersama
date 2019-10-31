@@ -1,6 +1,6 @@
 <template>
   <div>
-    <vueper-slides :dragging-distance="50" :slide-ratio="0.3">
+    <vueper-slides :dragging-distance="50" :bullets="false" :parallax="true" :slide-ratio="0.41">
       <vueper-slide
         v-for="(slide, i) in content3d.photos"
         :key="i"
@@ -9,7 +9,7 @@
       ></vueper-slide>
     </vueper-slides>
     <div class="row">
-      <div class="container is-fluid">
+      <div class="container is-fluid mobile-padding">
         <div class="columns">
           <div class="column is-8">
             <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="true"></b-loading>
@@ -38,14 +38,62 @@
         </div>
       </div>
       <hr />
-      <div class="container is-fluid">
+      <div class="container is-fluid mobile-padding">
         <div class="columns is-multiline">
           <div class="column is-7">
             <!-- Desc -->
             <h1 class="title is-5">Deskripsi</h1>
             <small v-html="propertyDetail.description || '-'" />
-            <br/>
-            <br/>
+            <br />
+            <br />
+            <!-- <carousel
+              mouse-drag
+              :per-page-custom="[[0, 1],[320, 1],[768, 2], [1024, 4]]"
+              navigation-enabled
+              :pagination-enabled="false"
+            >
+              <slide class="padding-slide" v-for="slide in content3d.photos" :key="slide.id">
+                <img :src="slide.thumbnail_url" alt="">
+              </slide>
+            </carousel> -->
+            <h1 class="title is-5">Galery</h1>
+            <vueper-slides
+              class="no-shadow"
+               :arrows-outside="false"
+              :visible-slides="1"
+              slide-multiple
+               :bullets="false" 
+              :slide-ratio="0.8"
+              :dragging-distance="200"
+              :breakpoints="{ 800: { visibleSlides: 2 } }"
+            >
+              <vueper-slide
+                v-for="(slide, i) in floolPlan"
+                :key="i"
+                :image="slide['image'+(i+1).toString()]"
+                :link="slide.link"
+              ></vueper-slide>
+            </vueper-slides>
+
+            <!-- Lokasi -->
+            <!-- <p class="title is-5">Lokasi</p>
+            <div class="is-vcentered" style="height: 350px">
+            
+              <div class="mapouter">
+                <div class="gmap_canvas">
+                  <iframe
+                    id="gmap_canvas"
+                    :src="`https://maps.google.com/maps?q=${propertyDetail.coordinate}&hl=es;z=14&amp;output=embed`"
+                    frameborder="0"
+                    scrolling="no"
+                    marginheight="0"
+                    marginwidth="0"
+                  ></iframe>
+                </div>
+              </div>
+            </div> -->
+          </div>
+          <div class="column is-5">
             <!-- Detail -->
             <h1 class="title is-5">Detail</h1>
             <div class="columns">
@@ -129,33 +177,15 @@
                 </table>
               </div>
             </div>
-            <!-- Lokasi -->
-            <p class="title is-5">Lokasi</p>
-            <div class="is-vcentered" style="height: 350px">
-              <!-- Map Canvas -->
-              <div class="mapouter">
-                <div class="gmap_canvas">
-                  <iframe
-                    id="gmap_canvas"
-                    :src="`https://maps.google.com/maps?q=${propertyDetail.coordinate}&hl=es;z=14&amp;output=embed`"
-                    frameborder="0"
-                    scrolling="no"
-                    marginheight="0"
-                    marginwidth="0"
-                  ></iframe>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="column is-5">
-            <img
-              src="https://s3.ap-southeast-2.amazonaws.com/scann3d-webapp/floorplans/images/000/013/701/original/Jl._Boulevard_Raya__Medan_Estate__Kec._Percut_Sei_Tuan__Kabupaten_Deli_Serdang.jpg?1565440985"
-              alt
-              srcset
-            />
-            <br/>
-            <br/>
-            <b-button type="is-primary" outlined size="is-medium" class="is-fullwidth" @click.prevent="gotoNewTab(content3d.one_page_website.url.branded)">Detail Page</b-button>
+            <br />
+            <br />
+            <b-button
+              type="is-primary"
+              outlined
+              size="is-medium"
+              class="is-fullwidth"
+              @click.prevent="gotoNewTab(content3d.one_page_website.url.branded)"
+            >Detail Page</b-button>
           </div>
           <div class="column is-12">
             <iframe
@@ -171,51 +201,16 @@
   </div>
 </template>
 <script>
+import { Carousel, Slide } from "vue-carousel";
 import { VueperSlides, VueperSlide } from "vueperslides";
 import "vueperslides/dist/vueperslides.css";
 import { capitalizeFLetter } from "../functionHelper.js";
 
 export default {
-  components: { VueperSlides, VueperSlide },
+  components: { VueperSlides, VueperSlide, Carousel },
   data: () => ({
     isLoading: false,
-    slides: [
-      {
-        title: "Mountain 1",
-        content: "Slide content 1",
-        link: "#link-to-article-1",
-        image:
-          "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-      },
-      {
-        title: "Mountain 1",
-        content: "Slide content 1",
-        link: "#link-to-article-1",
-        image:
-          "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-      },
-      {
-        title: "Mountain 1",
-        content: "Slide content 1",
-        link: "#link-to-article-1",
-        image:
-          "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-      },
-      {
-        title: "Mountain 1",
-        content: "Slide content 1",
-        link: "#link-to-article-1",
-        image:
-          "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-      },
-      {
-        title: "Mountain 1",
-        content: "Slide content 1",
-        link: "#link-to-article-1",
-        image:
-          "https://cms.dailysocial.id/wp-content/uploads/2018/03/dacc09391ac416899b85b6981b2df36b_pexels-photo-106399.jpeg"
-      }
-    ],
+    floolPlan: [],
     propertyDetail: null,
     content3d: null
   }),
@@ -230,13 +225,15 @@ export default {
           // this.record = res.data.record;
           this.propertyDetail = res.data.content;
           this.content3d = res.data.content3d;
+          this.floolPlan = res.data.floor_plan
+          
         });
     },
     capitalize(txt) {
       return capitalizeFLetter(txt);
     },
-    gotoNewTab(url){
-      window.open(url, "_blank"); 
+    gotoNewTab(url) {
+      window.open(url, "_blank");
     }
   },
   created() {
@@ -249,5 +246,4 @@ export default {
 #vtour {
   height: 600px !important;
 }
-
 </style>

@@ -50,7 +50,7 @@
             </div>
             <div class="navbar-item tag-copyright">
               <hr />
-              <p class="copyright">© Ezbild. All right reserved</p>
+              <p class="copyright">© Property Bersama. All right reserved</p>
             </div>
           </div>
         </div>
@@ -87,7 +87,7 @@
     </div>
 
     <!-- Footer -->
-    <footer v-if="this.$route.path != '/listing'" class="footer">
+    <footer v-if="this.$route.path != '/listing' " class="footer">
       <div class="container is-fluid">
         <div class="columns is-desktop">
           <div class="column">
@@ -165,7 +165,7 @@ export default {
           link: "/deals"
         },
         {
-          title: "Berita Properti",
+          title: "Berita",
           link: "/berita"
         }
       ],

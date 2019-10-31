@@ -4,54 +4,44 @@
       <div class="columns is-centered">
         <div class="column is-4 is-3-fullhd">
           <section class="section">
-            <h1 class="has-text-centered is-size-3">Login</h1>
-            <br />
-            <a class="button is-facebook is-fullwidth is-medium">
-              <b-icon icon="facebook"></b-icon>
-              <span>Masuk dengan facebook</span>
-            </a>
-            <br />
-            <div class="is-divider" data-content="OR"></div>
-            <form class="form" @submit="login()">
-              <b-field>
-                <b-input
-                  placeholder="Username"
-                  v-model="email"
-                  type="email"
-                  size="is-medium"
-                  required
-                ></b-input>
-              </b-field>
+            <!-- <div class="card box">
+              <div class="card-content"> -->
+              <h1 class="has-text-centered is-size-3">Login</h1>
+              <br />
+              <div class="is-divider" data-content="OR"></div>
+              <form class="form" @submit="login()">
+                <b-field>
+                  <b-input
+                    placeholder="Username"
+                    v-model="email"
+                    type="email"
+                    size="is-medium"
+                    required
+                  ></b-input>
+                </b-field>
 
-              <b-field>
-                <b-input
-                  placeholder="Password"
-                  v-model="password"
-                  type="password"
-                  size="is-medium"
-                  required
-                  password-reveal
-                ></b-input>
-              </b-field>
+                <b-field>
+                  <b-input
+                    placeholder="Password"
+                    v-model="password"
+                    type="password"
+                    size="is-medium"
+                    required
+                    password-reveal
+                  ></b-input>
+                </b-field>
 
-              <b-field class="has-text-right">
-                <router-link to="/reset-password">Lupa Password ?</router-link>
-              </b-field>
-
-              <b-field>
-                <b-button
-                  class="is-fullwidth"
-                  type="is-secondary"
-                  size="is-medium"
-                  @click.prevent="login()"
-                >Login</b-button>
-              </b-field>
-            </form>
-            <div class="is-divider"></div>
-            <p class="has-text-centered">
-              Belum punya akun?
-              <router-link to="/register">Daftar</router-link>
-            </p>
+                <b-field>
+                  <b-button
+                    class="is-fullwidth"
+                    type="is-primary"
+                    size="is-medium"
+                    @click.prevent="login()"
+                  >Login</b-button>
+                </b-field>
+              </form>
+              <!-- </div>
+            </div> -->
           </section>
         </div>
       </div>
@@ -60,45 +50,46 @@
 </template>
 <script>
 export default {
-  data () {
+  data() {
     return {
-      email: 'sanjaya.kiran@gmail.com',
-      password: 'TddklS9g',
-      isFullPage: true,
-    }
+      email: "sanjaya.kiran@gmail.com",
+      password: "TddklS9g",
+      isFullPage: true
+    };
   },
-  mounted () {
-    console.log(this.$route.path)
+  mounted() {
+    console.log(this.$route.path);
   },
   methods: {
-    login () {
+    login() {
       let dataLogin = {
         user: this.email,
         pass: this.password
-      }
+      };
 
-
-      this.axios.post('http://administrator.propertybersama.com/member/login', dataLogin)
-        .then((res) => {
-
+      this.axios
+        .post(
+          "http://administrator.propertybersama.com/member/login",
+          dataLogin
+        )
+        .then(res => {
           this.$buefy.toast.open({
             duration: 1000,
-            message: 'Login Berhasil',
-            position: 'is-top',
-          })
-          this.$store.dispatch("login/login", res.data.token)
-            .then(res => {
-              this.$router.push('/');
-            })
-        })
+            message: "Login Berhasil",
+            position: "is-top"
+          });
+          this.$store.dispatch("login/login", res.data.token).then(res => {
+            this.$router.push('/profile');
+          });
+        });
     }
   }
-}
+};
 </script>
 <style>
 section {
   position: relative;
-  top: 10%;
+  top: 20%;
 }
 @media only screen and (max-width: 780px) {
   section {

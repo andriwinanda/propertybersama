@@ -23,28 +23,28 @@
       <!-- Not Found -->
       <div v-else-if="!content && !isLoading" class="not-found">
         <h1 class="title is-1">404</h1>
-        <p class="subtitle">Artikel Tidak Ditemukan</p>
+        <p class="subtitle">Berita Tidak Ditemukan</p>
         <router-link class="button is-primary" to="/webfront">Kembali ke Beranda</router-link>
       </div>
     </div>
     <div class="column is-3 berita-lain" style>
-      <p class="title is-5">Artikel Terbaru</p>
+      <p class="title is-5">Berita Terbaru</p>
       <hr />
       <!-- Media -->
-      <article v-for="(artikel) in newest" :key="artikel.id" class="media">
+      <article v-for="(berita) in newest" :key="berita.id" class="media">
         <figure class="media-left">
           <p class="image is-64x64">
-            <img :src="artikel.image" />
+            <img :src="berita.image" />
           </p>
         </figure>
         <div class="media-content">
           <div class="content">
-              <strong class="title is-6">{{artikel.title}}</strong>
+              <strong class="title is-6">{{berita.title}}</strong>
             <p class>
               <br />
-              <span v-html="(artikel.text).substring(0,100)+'...'"></span>
+              <span v-html="(berita.text).substring(0,100)+'...'"></span>
               <small>
-                <a class="has-text-link" @click="artikel_detail(artikel.permalink)">Baca Selengkapnya »</a>
+                <a class="has-text-link" @click="berita_detail(berita.permalink)">Baca Selengkapnya »</a>
               </small>
             </p>
           </div>
@@ -74,8 +74,7 @@ export default {
     };
   },
   methods: {
-    artikel_detail(permalink) {
-      this.$router.push(permalink);
+
       this.get_article();
     },
     get_article() {
@@ -86,7 +85,7 @@ export default {
       this.axios
         .post("http://administrator.propertybersama.com/article/get_article_by_permalink", {permalink: permalink})
         .then(res => {
-          // this.artikel = res.data.content;
+          // this.berita = res.data.content;
           this.content = res.data.content[0];
           this.gallery = res.data.gallery;
           this.isLoading = false;

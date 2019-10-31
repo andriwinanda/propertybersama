@@ -40,24 +40,24 @@
               <p class="title is-4 has-text-white">Semua Properti</p>
               <div class="is-divider no-martop"></div>
 
-              <a class="box" v-for="(data, key) in request" :key="key">
+              <div class="box" v-for="(data, key) in products" :key="key">
                 <article class="media">
                   <div class="media-content">
                     <div class="content">
                       <p class="is-size-4-desktop is-size-5-mobile has-text-primary layanan">
-                        <span class="tag status" :class="data.label">{{data.status}}</span>
-                        {{data.layanan}}
+                        <a class="tag status" @click.prevent="publish(data.id)" :class="Number(data.posted) ? 'is-success':'is-warning'">{{Number(data.posted)? 'Published':'Unpublish'}}</a>
+                        {{data.type == 'SALE'? 'Dijual':'Disewakan' }} {{capitalize(data.name)}}
                       </p>
                       <div class="overflow">
-                        <b-icon icon="calendar" size="is-small"></b-icon>
-                        <span>{{data.date}}</span>
+                        <b-icon icon="cash-multiple" size="is-small"></b-icon>
+                        <span>Rp {{data.price_word}}</span>
                         <b-icon icon="map-marker" size="is-small"></b-icon>
-                        <b-tooltip label="data.lokasi">{{data.lokasi}}</b-tooltip>
+                        <b-tooltip label="data.lokasi">{{data.district}}, {{data.city}}</b-tooltip>
                       </div>
                     </div>
                   </div>
                 </article>
-              </a>
+              </div>
             </div>
           </div>
           <div class="column is-4">
@@ -106,42 +106,32 @@
   </div>
 </template>
 <script>
+import { capitalizeFLetter } from "../functionHelper";
 import { getToken } from '../localstorage-helper'
 export default {
   data() {
     return {
       profile: {},
+      products: [],
       profile_img:
-        "https://assets.gitlab-static.net/uploads/-/system/user/avatar/3465364/avatar.png?width=90",
-      request: [
-        {
-          _id: "",
-          layanan: "Permata Residence",
-          date: "04-04-2019",
-          lokasi: "Medan",
-          label: "is-warning",
-          status: "Publish"
-        },
-        {
-          _id: "",
-          layanan: "Puri Indah Regency",
-          date: "04-04-2019",
-          lokasi: "Medan",
-          label: "is-success",
-          status: "Unpublish"
-        },
-        {
-          _id: "",
-          layanan: "Platinum Residence",
-          date: "04-04-2019",
-          lokasi: "Nusa Tenggara Barat",
-          label: "is-warning",
-          status: "Publish"
-        }
-      ]
+        "https://assets.gitlab-static.net/uploads/-/system/user/avatar/3465364/avatar.png?width=90"
     };
   },
   methods: {
+
+    publish(id) {
+      this.axios
+        .get(`http://administrator.propertybersama.com/product/publish_by_member/${id}`, {
+          headers: {
+            'X-Auth-Token': getToken()
+          }
+        })
+        .then(res => {
+          this.getProduct()
+        });
+      
+
+    },
     getProfile() {
       this.axios
         .get("http://administrator.propertybersama.com/member/detail", {
@@ -153,9 +143,25 @@ export default {
           this.profile = res.data.content;
         });
     },
+    getProduct() {
+      this.products = []
+      this.axios
+        .get("http://administrator.propertybersama.com/product/get_by_member", {
+          headers: {
+            'X-Auth-Token': getToken()
+          }
+        })
+        .then(res => {
+          this.products = res.data.content;
+        });
+    },
+    capitalize(txt) {
+      return capitalizeFLetter(txt);
+    }
   },
   created() {
     this.getProfile()
+    this.getProduct()
   }
 };
 </script>
@@ -164,7 +170,7 @@ export default {
 <style scoped>
 /* @import url('../assets/css/style.scss'); */
 .hero {
-  background: linear-gradient(150deg, #434343, #000000);
+  background: linear-gradient(150deg, #2e2e2e, #0f0f0f);
 }
 .bg2 {
   padding-bottom: 0 !important;
@@ -181,7 +187,8 @@ a {
   color: black;
 }
 .request {
-  background: linear-gradient(141deg, #e4b015 0, #bd9210 80%);
+  background: #747474
+  /* background: linear-gradient(60deg, #2c2c2c, #726026 90%); */
 }
 .no-martop {
   margin-top: 0 !important;

@@ -3,9 +3,10 @@
     <div class="bg4 filter-fixed">
       <div class="container is-fluid">
         <div class="columns is-vcentered">
-          <div class="column is-10">
-            <b-field grouped>
+          <div class="column is-10" >
+            <b-field grouped group-multiline>
               <b-autocomplete
+                style="min-width: 200px"
                 expanded
                 v-model="searchForm.searchType"
                 placeholder="Masukan Kota"
@@ -130,7 +131,7 @@
               </b-field>
             </b-field>
           </div>
-          <div class="column is-2 has-text-right">
+          <div class="column is-2 has-text-right is-hidden-touch">
             <b-field>
               <b-switch v-model="mapView">Show Map</b-switch>
             </b-field>
@@ -138,7 +139,7 @@
         </div>
       </div>
     </div>
-    <div class=" listing">
+    <div class="listing mobile-padding">
       <b-loading :is-full-page="false" :active.sync="isLoading" :can-cancel="true"></b-loading>
 
       <div class="container is-fluid">
@@ -272,7 +273,7 @@
                     ></iframe>
                   </div>
                 </div>-->
-                <google-map v-if="!isLoading" :markerCoordinates="markerCoordinates" name="example"></google-map>
+                <google-map v-if="!isLoading" :isActive="true" :markerCoordinates="markerCoordinates" name="example"></google-map>
               </div>
             </div>
           </div>
@@ -294,7 +295,7 @@ export default {
   components: { googleMap, VueNumeric },
   data() {
     return {
-      mapView: false,
+      mapView: true,
       isLoading: false,
       lockMinMax: false,
       dataList: [],
@@ -487,7 +488,7 @@ export default {
   position: fixed;
   height: auto;
   width: 100%;
-  z-index: 100;
+  z-index: 2;
   border-top: 1px solid #dcdcdc57
 }
 .listing {
@@ -509,5 +510,14 @@ export default {
   text-align: center;
   padding-top: 6rem;
   min-height: 60vh;
+}
+@media only screen and (max-width: 1024px) {
+  /* .listing{
+    padding-top: 10rem !important;
+  } */
+  .filter-fixed{
+    position: inherit;
+   
+  }
 }
 </style>

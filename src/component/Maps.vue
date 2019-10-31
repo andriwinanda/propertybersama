@@ -6,7 +6,7 @@
 import GoogleMapsLoader from "google-maps";
 export default {
   name: "google-map",
-  props: ["name", "markerCoordinates"],
+  props: ["name", "markerCoordinates", "isActive"],
   data() {
     return {
       key: "AIzaSyB6jDL-cSc8H0pa8MnHwh1U9c_5MEKwmfA",
@@ -61,18 +61,18 @@ export default {
               coord.longitude
             );
 
-            const marker = new MarkerWithLabel({
-              position,
-              map: this.map,
-              //   icon: goldStar,
-              labelContent: `<div class="marker"><div class="labels ${coord.isActive}">Rp. ${coord.price}</div> <div class="pin ${coord.isActive}"></div></div>`, //   Label
-              labelAnchor: new google.maps.Point(48, 96),
-              labelClass: "", // the CSS class for the label
-              labelVisible: true,
-              icon: "none"
-            });
-            this.markers.push(marker);
-            this.map.fitBounds(this.bounds.extend(position));
+          const marker = new MarkerWithLabel({
+            position,
+            map: this.map,
+            //   icon: goldStar,
+            labelContent: `<div class="marker"><div class="labels ${this.isActive}">Rp. ${coord.price}</div> <div class="pin ${this.isActive}"></div></div>`, //   Label
+            labelAnchor: new google.maps.Point(48, 96),
+            labelClass: "", // the CSS class for the label
+            labelVisible: true,
+            icon: "none"
+          });
+          this.markers.push(marker);
+          this.map.fitBounds(this.bounds.extend(position));
 
             // Info Window
             google.maps.event.addListener(marker, "click", () => {
@@ -91,6 +91,22 @@ export default {
                               Rp ${coord.price} </span>
                               <a style="padding-left: 3px;" href="/listing/detail/${coord.id}" target="_blank">Detail »</a>
                             </div>
+          // Info Window
+          google.maps.event.addListener(marker, "click", () => {
+            {
+              infowindow.setContent(` <div class="columns infoListing is-multiline is-paddingless">
+                        <div class="column is-3 is-paddingless">
+                          <img class="imgList" width="70px" src="${coord.image}" alt="Placeholder image" />
+                        </div>
+                        <div class="column ket">
+                          <p class="title is-6 listTitle is-size-6-mobile">${(coord.name).toUpperCase()}</p>
+                          <p class="subtitle subListTitle is-7 has-text-grey">
+                            <small>${coord.district}, ${coord.city}</small>
+                          </p>
+                          <div>
+                          <span class="title is-6">
+                            Rp ${coord.price} </span>
+                            <a style="padding-left: 3px;" href="/listing/detail/${coord.id}" target="_blank">Detail »</a>
                           </div>
                         </div>`);
                 infowindow.open(this.map, marker);
@@ -123,7 +139,7 @@ export default {
 }
 .labels {
   position: relative;
-  color: white !important;
+  color: white;
   font-weight: bold;
   background-color: $primary;
   border-radius: 10px;
@@ -131,6 +147,12 @@ export default {
   font-size: 10pt;
   padding: 8px 10px;
   box-shadow: 2px 3px 8px rgba(10, 10, 10, 0.2) !important;
+
+}
+.labels.true {
+  background-color: white !important;
+  color: $primary !important;
+
 
 }
 .pin {
@@ -142,14 +164,10 @@ export default {
   border-left: solid 10px transparent;
   border-right: solid 10px transparent;
 }
-.labels.true {
-  color: $primary !important;
-  background-color: white;
-
-}
 .pin.true {
-  border-top: solid 10px white;
+  border-top: solid 10px white !important;
 }
+
 
 .imgList {
   min-height: 80%;

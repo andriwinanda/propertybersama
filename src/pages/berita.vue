@@ -12,7 +12,7 @@
               <p v-html="(articleList[0].text).substring(0,100)+'...'"></p>
               <br />
               <br />
-              <button class="button is-primary is-medium">Baca Selengkapnya</button>
+              <button @click="readMore(article[0].permalink)" class="button is-primary is-medium">Baca Selengkapnya</button>
             </div>
           </div>
         </div>
@@ -20,7 +20,7 @@
     </section>
     <section class="section bg2">
       <div class="container is-fluid">
-        <p class="is-size-3">Artikel</p>
+        <p class="is-size-3">Berita</p>
         <hr />
         <div class="columns is-multiline">
           <div class="column is-3" v-for="article in articleList" :key="article.id">
@@ -105,8 +105,8 @@ export default {
           this.isLoading = false;
         });
     },
-    readMore(id) {
-      this.$router.push(`/artikel-detail/${id}`);
+    readMore(permalink) {
+      this.$router.push(`/berita-detail/${permalink}`);
     },
     next() {
       this.offset += this.limit;

@@ -6,9 +6,9 @@ import ResetPassword from '@/pages/reset_password'
 import Home from '@/pages/home'
 import Detail from '@/pages/detail'
 import Listing from '@/pages/listing'
-import Artikel from '@/pages/artikel'
-import ArtikelDetail from '@/pages/artikel-detail'
-// import BeritaProperti from '@/pages/berita-properti'
+import Berita from '@/pages/berita'
+import BeritaDetail from '@/pages/berita-detail'
+import BeritaProperti from '@/pages/berita-properti'
 
 import Dashboard from '@/pages/dashboard'
 import EditProfile from '@/pages/edit-profile'
@@ -50,8 +50,7 @@ const router = new Router({
       component: Detail
     },
     {
-      path: '/artikel-detail/:permalink',
-      component: ArtikelDetail
+
     },
     {
       path: '/berita',

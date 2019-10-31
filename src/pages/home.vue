@@ -31,7 +31,7 @@
               <b-button type="is-primary" @click="listing()">Search</b-button>
             </p>
           </b-field>
-          <b-field grouped>
+          <b-field grouped group-multiline>
             <b-select v-model="searchForm.category" placeholder="Category">
               <option value>Semua Kategori</option>
               <option
