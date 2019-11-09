@@ -74,9 +74,6 @@ export default {
     };
   },
   methods: {
-
-      this.get_article();
-    },
     get_article() {
       this.content = null
       // Full Artickel
