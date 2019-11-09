@@ -235,27 +235,7 @@ export default {
   data() {
     return {
       lockMinMax: false,
-      propertyBersama: {
-        id: "1",
-        name: "Property Bersama - Property Listing",
-        address: "jl. T. Amir Hamzah B-18\nGriya Riatur\n",
-        coordinate: "3.610273,98.647739",
-        phone1: "08520000000",
-        phone2: "0-0",
-        email: "info@propertybersama.com",
-        billing_email: "info@propertybersama.com",
-        technical_email: "info@propertybersama.com",
-        cc_email: "info@propertybersama.com",
-        zip: "20124",
-        account_name: "SS",
-        account_no: "105-000-000000-0",
-        bank: "Unknow",
-        city: "Medan",
-        site_name: "www.propertybersama.com",
-        meta_description: "Property Listing",
-        meta_keyword: "Property Listing",
-        logo: "logo.6bb21a2_.png"
-      },
+      propertyBersama: {},
       categoryList: [
         // { id: "", name: "Semua" },
         // { id: "rumah", name: "Rumah" },
@@ -351,6 +331,13 @@ export default {
           this.categoryList = res.data.content;
         });
     },
+    getConfig() {
+      this.axios
+        .get("http://administrator.propertybersama.com/configuration/get")
+        .then(res => {
+          this.propertyBersama = res.data.content;
+        });
+    },
     capitalize(txt) {
       return capitalizeFLetter(txt);
     }
@@ -374,6 +361,7 @@ export default {
     this.getPopularCity();
     this.getCity();
     this.getCategory();
+    this.getConfig();
   }
 };
 </script>

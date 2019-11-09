@@ -238,8 +238,8 @@
               <p class="has-text-primary is-size-5 title">{{record}} Properti Ditemukan Untuk Anda</p>
 
               <div class="columns is-multiline">
-                <div class="column is-12" v-for="(slide, i) in dataList" :key="slide.id">
-                  <div class="card" @click="seeDetail(slide.id)" @mouseover="ishover(i)" @mouseleave="isleave(i)">
+                <div class="column is-12" v-for="slide in dataList" :key="slide.id">
+                  <div class="card" @click="seeDetail(slide.id)">
                     <div class="card-content">
                       <div class="columns is-multiline">
                         <div class="column is-3 is-paddingless">
@@ -273,7 +273,7 @@
                     ></iframe>
                   </div>
                 </div>-->
-                <google-map v-if="!isLoading" :isActive="true" :markerCoordinates="markerCoordinates" name="example"></google-map>
+                <google-map v-if="!isLoading" :markerCoordinates="markerCoordinates" name="example"></google-map>
               </div>
             </div>
           </div>
@@ -430,7 +430,6 @@ export default {
               mapContent.latitude = parseFloat(coordinate[0]);
               mapContent.longitude = parseFloat(coordinate[1]);
               mapContent.price = el.price_word;
-              mapContent.isActive = false;
               this.markerCoordinates.push(mapContent);
             }
           });
@@ -445,12 +444,6 @@ export default {
     },
     capitalize(txt) {
       return capitalizeFLetter(txt);
-    },
-    ishover(index){
-      this.markerCoordinates[index].isActive = true
-    },
-    isleave(index){
-      this.markerCoordinates[index].isActive = false
     }
   },
   created() {

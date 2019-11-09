@@ -1,11 +1,12 @@
 <template>
   <div class="google-map" :id="mapName"></div>
+  
 </template>
 <script>
 import GoogleMapsLoader from "google-maps";
 export default {
   name: "google-map",
-  props: ["name", "markerCoordinates", "isActive"],
+  props: ["name", "markerCoordinates"],
   data() {
     return {
       key: "AIzaSyB6jDL-cSc8H0pa8MnHwh1U9c_5MEKwmfA",
@@ -32,74 +33,76 @@ export default {
       markers: []
     };
   },
-  computed() {
-    this.markerCoordinates
-  },
-  methods: {
-    mapMarker() {   
-      if (this.markerCoordinates.length) {
-        GoogleMapsLoader.KEY = this.key;
-        GoogleMapsLoader.VERSION = "3.34";
-        GoogleMapsLoader.load(google => {
-          console.log(this.markerCoordinates);
-          var MarkerWithLabel = require("markerwithlabel")(google.maps);
-          this.bounds = new google.maps.LatLngBounds();
-          const element = document.getElementById(this.mapName);
-          const mapCentre = this.markerCoordinates[0];
-          const options = {
-            center: new google.maps.LatLng(
-              mapCentre.latitude,
-              mapCentre.longitude
-            )
-          };
-          var infowindow = new google.maps.InfoWindow(); //Declare Info Window
-          this.map = new google.maps.Map(element, options);
-          this.markerCoordinates.forEach(coord => {
-            const position = new google.maps.LatLng(
-              coord.latitude,
-              coord.longitude
-            );
+  mounted() {
+    if (this.markerCoordinates.length) {
+      GoogleMapsLoader.KEY = this.key;
+      GoogleMapsLoader.VERSION = "3.34";
+      GoogleMapsLoader.load(google => {
+        console.log(this.markerCoordinates);
+        var MarkerWithLabel = require("markerwithlabel")(google.maps);
+        this.bounds = new google.maps.LatLngBounds();
+        const element = document.getElementById(this.mapName);
+        const mapCentre = this.markerCoordinates[0];
+        const options = {
+          center: new google.maps.LatLng(
+            mapCentre.latitude,
+            mapCentre.longitude
+          )
+        };
+        var infowindow = new google.maps.InfoWindow(); //Declare Info Window
+        this.map = new google.maps.Map(element, options);
+        this.markerCoordinates.forEach(coord => {
+          const position = new google.maps.LatLng(
+            coord.latitude,
+            coord.longitude
+          );
 
-            const marker = new MarkerWithLabel({
-              position,
-              map: this.map,
-              //   icon: goldStar,
-              labelContent: `<div class="marker"><div class="labels ${this.isActive}">Rp. ${coord.price}</div> <div class="pin ${this.isActive}"></div></div>`, //   Label
-              labelAnchor: new google.maps.Point(48, 96),
-              labelClass: "", // the CSS class for the label
-              labelVisible: true,
-              icon: "none"
-            });
-            this.markers.push(marker);
-            this.map.fitBounds(this.bounds.extend(position));
-
-            // Info Window
-            google.maps.event.addListener(marker, "click", () => {
-              {
-                infowindow.setContent(`<div class="columns infoListing is-multiline is-paddingless">
-                          <div class="column is-3 is-paddingless">
-                            <img class="imgList" width="70px" src="${coord.image}" alt="Placeholder image" />
-                          </div>
-                          <div class="column ket">
-                            <p class="title is-6 listTitle is-size-6-mobile">${(coord.name).toUpperCase()}</p>
-                            <p class="subtitle subListTitle is-7 has-text-grey">
-                              <small>${coord.district}, ${coord.city}</small>
-                            </p>
-                            <div>
-                            <span class="title is-6">
-                              Rp ${coord.price} </span>
-                              <a style="padding-left: 3px;" href="/listing/detail/${coord.id}" target="_blank">Detail »</a>
-                            </div>`)
-              }
-        
-            });
+          const marker = new MarkerWithLabel({
+            position,
+            map: this.map,
+            //   icon: goldStar,
+            labelContent: `<div class="marker"><div class="labels">Rp. ${coord.price}</div> <div class="pin"></div></div>`, //   Label
+            labelAnchor: new google.maps.Point(48, 96),
+            labelClass: "", // the CSS class for the label
+            labelVisible: true,
+            icon: "none"
           });
-         })
-      
-     }
+          this.markers.push(marker);
+          this.map.fitBounds(this.bounds.extend(position));
+
+          // Info Window
+          google.maps.event.addListener(marker, "click", () => {
+            {
+              infowindow.setContent(` <div class="columns infoListing is-multiline is-paddingless">
+                        <div class="column is-3 is-paddingless">
+                          <img class="imgList" width="70px" src="${coord.image}" alt="Placeholder image" />
+                        </div>
+                        <div class="column ket">
+                          <p class="title is-6 listTitle is-size-6-mobile">${(coord.name).toUpperCase()}</p>
+                          <p class="subtitle subListTitle is-7 has-text-grey">
+                            <small>${coord.district}, ${coord.city}</small>
+                          </p>
+                          <div>
+                          <span class="title is-6">
+                            Rp ${coord.price} </span>
+                            <a style="padding-left: 3px;" href="/listing/detail/${coord.id}" target="_blank">Detail »</a>
+                          </div>
+                        </div>
+                      </div>`);
+              infowindow.open(this.map, marker);
+            }
+          });
+        });
+      });
     }
+    // google.maps.event.addListener(marker, 'click', (function(marker, i) {
+    //     return function() {
+    //       infowindow.setContent(locations[i][0]);
+    //       infowindow.open(map, marker);
+    //     }
+    //   })(marker, i));
   }
-}
+};
 </script>
 <style lang="scss">
 @import "../assets/css/style.scss";
@@ -115,7 +118,7 @@ export default {
 }
 .labels {
   position: relative;
-  color: white;
+  color: white !important;
   font-weight: bold;
   background-color: $primary;
   border-radius: 10px;
@@ -123,10 +126,7 @@ export default {
   font-size: 10pt;
   padding: 8px 10px;
   box-shadow: 2px 3px 8px rgba(10, 10, 10, 0.2) !important;
-}
-.labels.true {
-  background-color: white !important;
-  color: $primary !important;
+
 }
 .pin {
   position: absolute;
@@ -137,9 +137,7 @@ export default {
   border-left: solid 10px transparent;
   border-right: solid 10px transparent;
 }
-.pin.true {
-  border-top: solid 10px white !important;
-}
+
 
 .imgList {
   min-height: 80%;
@@ -148,27 +146,29 @@ export default {
 }
 
 // Window
-.gm-style-iw-d {
-  overflow: hidden !important;
+.gm-style-iw-d{
+  overflow:hidden !important;
   padding: 8px;
 }
-.ket {
-  padding-top: 5px !important;
+.ket{
+  padding-top: 5px !important
 }
-.infoListing {
+.infoListing{
   padding: 20px;
 }
-.listTitle {
+.listTitle{
   margin-bottom: 20px !important;
 }
-.subListTitle {
+.subListTitle{
   margin-bottom: 5px !important;
 }
 
-.gm-style .gm-style-iw-t::after {
+.gm-style .gm-style-iw-t::after{
   background: none !important;
   box-shadow: none !important;
 }
+
+/* Marker */
 /* 
 .pin {
   width: 30px;
@@ -196,4 +196,5 @@ export default {
   animation-fill-mode: both;
   animation-duration: 1s;
 } */
+
 </style>
