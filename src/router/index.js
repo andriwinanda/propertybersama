@@ -42,7 +42,7 @@ const router = new Router({
       component: Listing
     },
     {
-      path: '/deals',
+      path: '/disewa',
       component: Listing
     },
     {

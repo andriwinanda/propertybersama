@@ -30,7 +30,40 @@
 
             <!-- Jika tidak ada user -->
             <div v-if="!isLoggedIn" class="navbar-item">
-              <router-link class="button is-primary" to="/login">Login</router-link>
+              <!-- <router-link class="button is-primary" to="/login">Login</router-link> -->
+              <b-dropdown v-model="navigation" position="is-bottom-left" aria-role="menu">
+                <a class="navbar-item" slot="trigger" role="button">
+                  <span>Menu</span>
+                  <b-icon icon="menu-down"></b-icon>
+                </a>
+
+                <b-dropdown-item custom aria-role="menuitem">
+                  Logged as
+                  <b>Rafael Beraldo</b>
+                </b-dropdown-item>
+                <hr class="dropdown-divider" />
+                <b-dropdown-item has-link aria-role="menuitem">
+                  <a href="https://google.com" target="_blank">
+                    <b-icon icon="link"></b-icon>Google (link)
+                  </a>
+                </b-dropdown-item>
+                <b-dropdown-item value="home" aria-role="menuitem">
+                  <b-icon icon="home"></b-icon>Home
+                </b-dropdown-item>
+                <b-dropdown-item value="products" aria-role="menuitem">
+                  <b-icon icon="cart"></b-icon>Products
+                </b-dropdown-item>
+                <b-dropdown-item value="blog" disabled aria-role="menuitem">
+                  <b-icon icon="book-open"></b-icon>Blog
+                </b-dropdown-item>
+                <hr class="dropdown-divider" aria-role="menuitem" />
+                <b-dropdown-item value="settings">
+                  <b-icon icon="settings"></b-icon>Settings
+                </b-dropdown-item>
+                <b-dropdown-item value="logout" aria-role="menuitem">
+                  <b-icon icon="logout"></b-icon>Logout
+                </b-dropdown-item>
+              </b-dropdown>
             </div>
 
             <!-- Jika ada user -->
@@ -144,7 +177,7 @@
 import { mapState } from "vuex";
 export default {
   name: "app",
-  data () {
+  data() {
     return {
       isFullPage: true,
       // If any user
@@ -152,17 +185,21 @@ export default {
       showNav: false,
       active: "",
       items: [
-        {
-          title: "Daftarkan properti anda",
-          link: "/"
-        },
+        // {
+        //   title: "Daftarkan properti anda",
+        //   link: "/"
+        // },
         {
           title: "Beli",
           link: "/listing"
         },
         {
-          title: "Deals",
-          link: "/deals"
+          title: "Disewa",
+          link: "/disewa"
+        },
+        {
+          title: "Property Baru",
+          link: "/listing"
         },
         {
           title: "Berita",
@@ -178,34 +215,35 @@ export default {
     };
   },
   methods: {
-    home () {
+    home() {
       event.preventDefault();
       this.showNav = false;
       this.$router.push("/");
     },
-    isActive (name) {
+    isActive(name) {
       return this.active === name;
     },
-    select (item) {
+    select(item) {
       event.preventDefault();
       this.showNav = false;
       this.active = item.title;
       this.$router.push(item.link);
     },
-    logout () {
+    logout() {
       this.$store.dispatch("login/logout").then(() => {
         this.$router.push("/login");
-      })
+      });
     },
-    tesGet () {
+    tesGet() {
       let dataLogin = {
-        "user": "sanjaya.kiran@gmail.com",
-        "pass": "TddklS9g"
-      }
-      this.axios.get('http://administrator.propertybersama.com/member/detail')
-        .then((res) => {
-          console.log(res)
-        })
+        user: "sanjaya.kiran@gmail.com",
+        pass: "TddklS9g"
+      };
+      this.axios
+        .get("http://administrator.propertybersama.com/member/detail")
+        .then(res => {
+          console.log(res);
+        });
     }
   },
   computed: {
@@ -213,7 +251,6 @@ export default {
       isLoggedIn: state => state.login.isLoggedIn
     })
   }
-
 };
 </script>
 <style lang="scss">
@@ -225,18 +262,19 @@ export default {
 }
 .logo {
   padding: 0 !important;
+  width: 200px;
   max-height: 100% !important;
 }
 .navbar-item img {
   max-height: 100% !important;
 }
 .logo img {
-  width: 90px;
+  width: 135px;
   height: auto;
   max-height: 100%;
 }
 .view {
-  margin-top: 50px !important;
+  margin-top: 4.9rem !important;
 }
 .navbar-brand {
   padding: 0 !important;

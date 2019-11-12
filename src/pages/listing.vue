@@ -482,7 +482,7 @@ export default {
   height: auto;
   width: 100%;
   z-index: 2;
-  border-top: 1px solid #dcdcdc57
+  border-top: 1px solid #dcdcdc57;
 }
 .listing {
   padding-top: 4.3rem;
