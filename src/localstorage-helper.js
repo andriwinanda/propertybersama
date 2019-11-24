@@ -1,6 +1,7 @@
 const BASE_URL_KEY = 'baseUrl'
 const TOKEN_KEY = 'token'
 const DATA_USER_KEY = 'data_user'
+const LOVE_KEY = 'love'
 
 // BASE URL
 
@@ -30,6 +31,21 @@ export function getToken() {
 export function removeToken() {
   localStorage.removeItem(TOKEN_KEY)
 }
+
+// Love
+
+export function setLove(item) {
+  localStorage.setItem(LOVE_KEY, item)
+}
+
+export function getLove() {
+  return localStorage.getItem(LOVE_KEY)
+}
+
+export function removeLove() {
+  localStorage.removeItem(LOVE_KEY)
+}
+
 
 // DATA LOGIN
 

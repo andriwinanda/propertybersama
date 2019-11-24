@@ -29,42 +29,18 @@
             >{{item.title}}</a>
 
             <!-- Jika tidak ada user -->
-            <div v-if="!isLoggedIn" class="navbar-item">
-              <!-- <router-link class="button is-primary" to="/login">Login</router-link> -->
-              <b-dropdown v-model="navigation" position="is-bottom-left" aria-role="menu">
-                <a class="navbar-item" slot="trigger" role="button">
-                  <span>Menu</span>
-                  <b-icon icon="menu-down"></b-icon>
-                </a>
+            <!-- <div v-if="!isLoggedIn"> -->
+            <!-- <router-link class="button is-primary" to="/login">Login</router-link> -->
 
-                <b-dropdown-item custom aria-role="menuitem">
-                  Logged as
-                  <b>Rafael Beraldo</b>
-                </b-dropdown-item>
-                <hr class="dropdown-divider" />
-                <b-dropdown-item has-link aria-role="menuitem">
-                  <a href="https://google.com" target="_blank">
-                    <b-icon icon="link"></b-icon>Google (link)
-                  </a>
-                </b-dropdown-item>
-                <b-dropdown-item value="home" aria-role="menuitem">
-                  <b-icon icon="home"></b-icon>Home
-                </b-dropdown-item>
-                <b-dropdown-item value="products" aria-role="menuitem">
-                  <b-icon icon="cart"></b-icon>Products
-                </b-dropdown-item>
-                <b-dropdown-item value="blog" disabled aria-role="menuitem">
-                  <b-icon icon="book-open"></b-icon>Blog
-                </b-dropdown-item>
-                <hr class="dropdown-divider" aria-role="menuitem" />
-                <b-dropdown-item value="settings">
-                  <b-icon icon="settings"></b-icon>Settings
-                </b-dropdown-item>
-                <b-dropdown-item value="logout" aria-role="menuitem">
-                  <b-icon icon="logout"></b-icon>Logout
-                </b-dropdown-item>
-              </b-dropdown>
+            <div v-if="!isLoggedIn" class="navbar-item has-dropdown is-hoverable">
+              <a class="navbar-link">Menu</a>
+              <div class="navbar-dropdown is-right">
+                <a class="navbar-item" @click.prevent="daftar()">Daftarkan Property</a>
+                <hr class="navbar-divider" />
+                <a class="navbar-item" @click.prevent="login()">Login</a>
+              </div>
             </div>
+            <!-- </div> -->
 
             <!-- Jika ada user -->
             <div v-else class="navbar-item has-dropdown is-hoverable">
@@ -81,6 +57,63 @@
                 <a class="navbar-item" @click.prevent="logout()">Logout</a>
               </div>
             </div>
+
+            <!-- Love -->
+            <b-dropdown position="is-bottom-left" ref="dropdownLove" aria-role="menu" trap-focus>
+              <a class="navbar-item" slot="trigger" role="button">
+                <small>{{love.length}}</small>
+                &nbsp;
+                <b-icon
+                  size="is-small"
+                  class="has-text-grey-light"
+                  :icon="love.length? 'heart': 'heart-outline'"
+                ></b-icon>
+              </a>
+
+              <b-dropdown-item aria-role="menu-item" :focusable="false" custom paddingless>
+                <div class="modal-card" style="width:300px;">
+                  <section class="is-multiline">
+                    <div
+                      style="padding: 0.1rem 0.5rem 0.5rem 1rem"
+                      class="has-text-primary"
+                    >Property yang anda sukai</div>
+
+                    <div class="card" v-if="!love.length">
+                      <div class="card-content">
+                        <p class="has-text-centered has-text-grey-light">Anda belum meyukai property apapun</p>
+                      </div>
+                    </div>
+                    <div v-for="(slide,index) in love" :key="index">
+                      <div class="card">
+                        <div class="card-content">
+                          <div class="columns is-multiline" style="padding: 0.1rem 0.5rem">
+                            <div class="column is-3 v-centered" @click="seeDetail(slide.id)" style="padding: 0.5rem">
+                              <img class="imgList" :src="slide.image" alt="Placeholder image" />
+                            </div>
+                            <div class="column" @click="seeDetail(slide.id)">
+                              <p
+                                class="title is-7 is-size-7-mobile"
+                              >{{((slide.name).toUpperCase())}}</p>
+                              <p class="subtitle is-7 has-text-grey">
+                                <small>{{slide.district+", " +slide.city}}</small>
+                              </p>
+                              <p class="title is-7">Rp {{slide.price_word}}</p>
+                            </div>
+                            <div class="column is-1" style="padding: 1.5rem 0">
+                              <button class="delete is-small" @click.prevent="removeItem(index)"></button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="has-text-centered" style="padding-top: 0.5rem">
+                      <a class="has-text-danger is-size-7" @click.prevent="deleteAll()">Hapus Semua</a>
+                    </div>
+                  </section>
+                </div>
+              </b-dropdown-item>
+            </b-dropdown>
+
             <div class="navbar-item tag-copyright">
               <hr />
               <p class="copyright">© Property Bersama. All right reserved</p>
@@ -234,6 +267,9 @@ export default {
         this.$router.push("/login");
       });
     },
+    login() {
+      this.$router.push("/login");
+    },
     tesGet() {
       let dataLogin = {
         user: "sanjaya.kiran@gmail.com",
@@ -244,11 +280,25 @@ export default {
         .then(res => {
           console.log(res);
         });
+    },
+    daftar() {
+      this.$router.push("/about/daftarkan-properti-anda");
+    },
+    seeDetail(id) {
+      this.$router.push("/listing/detail/" + id);
+      this.$refs.dropdownLove.toggle();
+    },
+    removeItem(index) {
+      this.$store.commit("love/delLoveItem", index);
+    },
+    deleteAll() {
+      this.$store.commit("love/delAll");
     }
   },
   computed: {
     ...mapState({
-      isLoggedIn: state => state.login.isLoggedIn
+      isLoggedIn: state => state.login.isLoggedIn,
+      love: state => state.love.love
     })
   }
 };
@@ -269,12 +319,12 @@ export default {
   max-height: 100% !important;
 }
 .logo img {
-  width: 135px;
+  width: 120px;
   height: auto;
   max-height: 100%;
 }
 .view {
-  margin-top: 4.9rem !important;
+  margin-top: 4.28rem !important;
 }
 .navbar-brand {
   padding: 0 !important;

@@ -27,30 +27,6 @@
         <router-link class="button is-primary" to="/webfront">Kembali ke Beranda</router-link>
       </div>
     </div>
-    <div class="column is-3 berita-lain">
-      <p class="title is-5">Berita Terbaru</p>
-      <hr />
-      <!-- Media -->
-      <article v-for="(berita) in newest" :key="berita.id" class="media">
-        <figure class="media-left">
-          <p class="image is-64x64">
-            <img :src="berita.image" />
-          </p>
-        </figure>
-        <div class="media-content">
-          <div class="content">
-              <strong class="title is-6">{{berita.title}}</strong>
-            <p class>
-              <br />
-              <span v-html="(berita.text).substring(0,100)+'...'"></span>
-              <small>
-                <a class="has-text-link" @click="berita_detail(berita.permalink)">Baca Selengkapnya »</a>
-              </small>
-            </p>
-          </div>
-        </div>
-      </article>
-    </div>
   </div>
 </div>
 </template>

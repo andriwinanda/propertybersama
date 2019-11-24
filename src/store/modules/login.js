@@ -47,14 +47,6 @@ const actions = {
     setBaseUrl(url)
     commit(TOKEN_VERIFIED)
   },
-  reset ({ commit }) {
-    removeBaseUrl()
-    removeToken()
-    removeDataUser()
-    state.dataMenu = null
-    state.dataUser = null
-    commit(RESET)
-  },
   login ({ commit, state }, token) {
    
     // commit(LOGIN) // show spinner

@@ -3,7 +3,7 @@
     <div class="bg4 filter-fixed">
       <div class="container is-fluid">
         <div class="columns is-vcentered">
-          <div class="column is-10" >
+          <div class="column is-10">
             <b-field grouped group-multiline>
               <b-autocomplete
                 style="min-width: 200px"
@@ -170,8 +170,8 @@
           </div>
           <div class="columns is-multiline">
             <div class="column is-3" v-for="slide in dataList" :key="slide.id">
-              <div class="card" @click="seeDetail(slide.id)">
-                <div class="card-image">
+              <div class="card">
+                <div class="card-image" @click="seeDetail(slide.id)">
                   <b-tag type="is-primary" class="cardlabel">{{slide.type}}</b-tag>
                   <figure class="image is-4by3">
                     <img :src="slide.image" alt="Placeholder image" />
@@ -179,15 +179,15 @@
                 </div>
                 <div class="card-content">
                   <div class="media">
-                    <div class="media-content">
+                    <div class="media-content" @click="seeDetail(slide.id)">
                       <p class="title is-6 is-size-6-mobile">{{((slide.name).toUpperCase())}}</p>
                     </div>
-                    <div class="media-right">
-                      <b-icon icon="heart"></b-icon>
+                    <div class="media-right" @click="loveItem(slide)">
+                      <b-icon class="has-text-grey-light" icon="heart"></b-icon>
                     </div>
                   </div>
 
-                  <div class="content">
+                  <div class="content" @click="seeDetail(slide.id)">
                     <p class="has-text-grey">{{slide.district+", " +slide.city}}</p>
                     <p class="title is-6">
                       <!-- <vue-numeric
@@ -239,18 +239,23 @@
 
               <div class="columns is-multiline">
                 <div class="column is-12" v-for="slide in dataList" :key="slide.id">
-                  <div class="card" @click="seeDetail(slide.id)">
+                  <div class="card">
                     <div class="card-content">
                       <div class="columns is-multiline">
-                        <div class="column is-3 is-paddingless">
+                        <div class="column is-3 is-paddingless" @click="seeDetail(slide.id)">
                           <img class="imgList" :src="slide.image" alt="Placeholder image" />
                         </div>
-                        <div class="column">
+                        <div class="column" @click="seeDetail(slide.id)">
                           <p class="title is-6 is-size-6-mobile">{{((slide.name).toUpperCase())}}</p>
                           <p class="subtitle is-6 has-text-grey">
                             <small>{{slide.district+", " +slide.city}}</small>
                           </p>
                           <p class="title is-6">Rp {{slide.price_word}}</p>
+                        </div>
+                        <div class="column is-1 is-paddingless">
+                          <div @click="loveItem(slide)" style="padding-top: 2rem">
+                            <b-icon class="has-text-grey-light" icon="heart"></b-icon>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -260,19 +265,6 @@
             </div>
             <div class="column is-7">
               <div class="fixed map">
-                <!-- Map Canvas -->
-                <!-- <div class="mapouter">
-                  <div class="gmap_canvas">
-                    <iframe
-                      id="gmap_canvas"
-                      src="https://maps.google.com/maps?q=Halton%20Place&t=&z=13&ie=UTF8&iwloc=&output=embed"
-                      frameborder="0"
-                      scrolling="no"
-                      marginheight="0"
-                      marginwidth="0"
-                    ></iframe>
-                  </div>
-                </div>-->
                 <google-map v-if="!isLoading" :markerCoordinates="markerCoordinates" name="example"></google-map>
               </div>
             </div>
@@ -282,7 +274,6 @@
     </div>
 
     <!-- Filter -->
-    
   </div>
 </template>
 <script>
@@ -290,6 +281,8 @@ import GoogleMapsLoader from "google-maps";
 import googleMap from "../component/Maps.vue";
 import VueNumeric from "vue-numeric";
 import { capitalizeFLetter } from "../functionHelper";
+import { mapState } from "vuex";
+import { setLove } from "../localstorage-helper";
 
 export default {
   components: { googleMap, VueNumeric },
@@ -319,23 +312,7 @@ export default {
       record: 0,
       offset: 0,
       limit: 10,
-      markerCoordinates: [
-        // {
-        //   latitude: 51.501527,
-        //   longitude: -0.1921837,
-        //   price: 6600000
-        // },
-        // {
-        //   latitude: 51.505874,
-        //   longitude: -0.1838486,
-        //   price: 5800000
-        // },
-        // {
-        //   latitude: 51.4998973,
-        //   longitude: -0.202432,
-        //   price: 1000000
-        // }
-      ]
+      markerCoordinates: []
     };
   },
   computed: {
@@ -444,7 +421,15 @@ export default {
     },
     capitalize(txt) {
       return capitalizeFLetter(txt);
+    },
+    loveItem(item) {
+      this.$store.commit("love/setLoveItem", item);
     }
+  },
+  computed: {
+    ...mapState({
+      love: state => state.love.love
+    })
   },
   created() {
     this.getCity();
@@ -477,7 +462,7 @@ export default {
   touch-action: pan-x pan-y;
   /* background-color: aquamarine;*/
 }
-.filter-fixed{
+.filter-fixed {
   position: fixed;
   height: auto;
   width: 100%;
@@ -508,9 +493,8 @@ export default {
   /* .listing{
     padding-top: 10rem !important;
   } */
-  .filter-fixed{
+  .filter-fixed {
     position: inherit;
-   
   }
 }
 </style>

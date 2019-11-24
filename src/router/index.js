@@ -8,6 +8,7 @@ import Detail from '@/pages/detail'
 import Listing from '@/pages/listing'
 import Berita from '@/pages/berita'
 import BeritaDetail from '@/pages/berita-detail'
+import About from '@/pages/about'
 import BeritaProperti from '@/pages/berita-properti'
 
 import Dashboard from '@/pages/dashboard'
@@ -56,6 +57,10 @@ const router = new Router({
     {
       path: '/berita-detail/:permalink',
       component: BeritaDetail
+    },
+    {
+      path: '/about/:permalink',
+      component: About
     },
 
     {

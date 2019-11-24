@@ -117,8 +117,8 @@
           :pagination-enabled="false"
         >
           <slide class="padding-slide" v-for="slide in recomended" :key="slide.id">
-            <div class="card" @click="seeDetail(slide.id)">
-              <div class="card-image">
+            <div class="card">
+              <div class="card-image" @click="seeDetail(slide.id)">
                 <b-tag type="is-primary" class="cardlabel">{{slide.type}}</b-tag>
                 <figure class="image is-4by3">
                   <img :src="slide.image" alt="Placeholder image" />
@@ -126,15 +126,15 @@
               </div>
               <div class="card-content">
                 <div class="media">
-                  <div class="media-content">
+                  <div class="media-content" @click="seeDetail(slide.id)">
                     <p class="title is-6 is-size-6-mobile">{{capitalize(slide.name)}}</p>
                   </div>
-                  <div class="media-right">
-                    <b-icon icon="heart"></b-icon>
+                  <div class="media-right" @click="love(slide)" >
+                    <b-icon class="has-text-grey-light" icon="heart"></b-icon>
                   </div>
                 </div>
 
-                <div class="content">
+                <div class="content" @click="seeDetail(slide.id)">
                   <p class="has-text-grey">{{slide.district+', '+slide.city}}</p>
                   <p class="title is-6">
                     <!-- <vue-numeric
@@ -187,13 +187,6 @@
                       :key="city.id"
                       @click="listingByCity(city.id, city.nama)"
                     >{{city.nama}}</span>
-                    <!-- <span class="button" @click="listing()">Jakarta Selatan</span>
-                    <span class="button" @click="listing()">Surabaya</span>
-                    <span class="button" @click="listing()">Palembang</span>
-                    <span class="button" @click="listing()">Yogyakarta</span>
-                    <span class="button" @click="listing()">Solo</span>
-                    <span class="button" @click="listing()">Makasar</span>
-                    <span class="button" @click="listing()">Padang</span>-->
                   </div>
                 </b-field>
               </div>
@@ -225,6 +218,8 @@
 import { Carousel, Slide } from "vue-carousel";
 import VueNumeric from "vue-numeric";
 import { capitalizeFLetter } from "../functionHelper.js";
+import { setLove } from "../localstorage-helper";
+
 // import debounce from 'lodash/debounce'
 export default {
   components: {
@@ -234,7 +229,7 @@ export default {
   },
   data() {
     return {
-      lockMinMax: false,
+      lockMinMax: true,
       propertyBersama: {},
       categoryList: [
         // { id: "", name: "Semua" },
@@ -340,6 +335,9 @@ export default {
     },
     capitalize(txt) {
       return capitalizeFLetter(txt);
+    },
+    love(item){
+      this.$store.commit('love/setLoveItem', item)
     }
   },
   computed: {
