@@ -7,8 +7,8 @@ $primary: #bd9210;
 $primary-invert: findColorInvert($primary);
 $secondary: #80b942;
 $secondary-invert: findColorInvert($secondary);
-$facebook: #2366d1;
-$facebook-invert: findColorInvert($facebook);
+$danger: #e20404;
+$danger-invert: findColorInvert($danger);
 
 // Setup $colors to use as bulma classes (e.g. 'is-facebook')
 $colors: (
@@ -51,10 +51,6 @@ $colors: (
   "danger": (
     $danger,
     $danger-invert
-  ),
-  "facebook": (
-    $facebook,
-    $facebook-invert
   )
 );
 

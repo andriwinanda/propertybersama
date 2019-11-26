@@ -60,12 +60,12 @@
 
             <!-- Love -->
             <b-dropdown position="is-bottom-left" ref="dropdownLove" aria-role="menu" trap-focus>
-              <a class="navbar-item" slot="trigger" role="button">
+              <a class="navbar-item"  slot="trigger" role="button">
                 <small>{{love.length}}</small>
                 &nbsp;
                 <b-icon
                   size="is-small"
-                  class="has-text-grey-light"
+                  :class="love.length ? 'has-text-danger': 'has-text-grey-light'"
                   :icon="love.length? 'heart': 'heart-outline'"
                 ></b-icon>
               </a>

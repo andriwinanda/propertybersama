@@ -129,11 +129,10 @@
                   <div class="media-content" @click="seeDetail(slide.id)">
                     <p class="title is-6 is-size-6-mobile">{{capitalize(slide.name)}}</p>
                   </div>
-                  <div class="media-right" @click="love(slide)">
+                  <div class="media-right" @click="loveItem(slide)">
                     <b-icon
-                      class="has-text-grey-light"
-                     
-                      icon="heart"
+                      :class="isLoved(slide.id)"
+                      :icon="isLovedIcon(slide.id)"
                     ></b-icon>
                   </div>
                 </div>
@@ -341,7 +340,7 @@ export default {
     capitalize(txt) {
       return capitalizeFLetter(txt);
     },
-    love(item) {
+    loveItem(item) {
       this.$store.commit("love/setLoveItem", item);
     }
   },
@@ -361,14 +360,27 @@ export default {
         });
       }
     },
-    // isLoved(id) {
-    //   for (let i = 0; i < this.love.length; i++) {
-    //     if (this.love[i].id == id) {
-    //       return true;
-    //     }
-    //   }
-    //   return false
-    // }
+    isLoved() {
+      return id => {
+        for (let i = 0; i < this.love.length; i++) {
+          if (this.love[i].id === id) {
+            return "has-text-danger";
+          }
+        }
+        return "has-text-grey-light";
+      };
+    },
+    isLovedIcon() {
+      return id => {
+        for (let i = 0; i < this.love.length; i++) {
+          if (this.love[i].id === id) {
+            return "heart";
+            
+          }
+        }
+        return "heart-outline";
+      };
+    }
   },
   created() {
     this.getRecomendation();

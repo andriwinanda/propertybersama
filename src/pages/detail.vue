@@ -40,7 +40,11 @@
             style="padding-top: 1.3rem"
             @click="loveItem(propertyDetail)"
           >
-            <b-icon class="has-text-grey-light" size="is-medium" icon="heart"></b-icon>
+            <b-icon
+              :class="isLoved(propertyDetail.id)"
+              size="is-medium"
+              :icon="isLovedIcon(propertyDetail.id)"
+            ></b-icon>
           </div>
         </div>
       </div>
@@ -81,24 +85,6 @@
                 :link="slide.link"
               ></vueper-slide>
             </vueper-slides>
-
-            <!-- Lokasi -->
-            <!-- <p class="title is-5">Lokasi</p>
-            <div class="is-vcentered" style="height: 350px">
-            
-              <div class="mapouter">
-                <div class="gmap_canvas">
-                  <iframe
-                    id="gmap_canvas"
-                    :src="`https://maps.google.com/maps?q=${propertyDetail.coordinate}&hl=es;z=14&amp;output=embed`"
-                    frameborder="0"
-                    scrolling="no"
-                    marginheight="0"
-                    marginwidth="0"
-                  ></iframe>
-                </div>
-              </div>
-            </div>-->
           </div>
           <div class="column is-5">
             <!-- Detail -->
@@ -257,6 +243,7 @@ import { Carousel, Slide } from "vue-carousel";
 import { VueperSlides, VueperSlide } from "vueperslides";
 import "vueperslides/dist/vueperslides.css";
 import { capitalizeFLetter } from "../functionHelper.js";
+import { mapState } from "vuex";
 
 export default {
   components: { VueperSlides, VueperSlide, Carousel },
@@ -309,6 +296,31 @@ export default {
   created() {
     let id = this.$route.params.id;
     this.getData(id);
+  },
+  computed: {
+    ...mapState({
+      love: state => state.love.love
+    }),
+    isLoved() {
+      return id => {
+        for (let i = 0; i < this.love.length; i++) {
+          if (this.love[i].id === id) {
+            return "has-text-danger";
+          }
+        }
+        return "has-text-grey-light";
+      };
+    },
+    isLovedIcon() {
+      return id => {
+        for (let i = 0; i < this.love.length; i++) {
+          if (this.love[i].id === id) {
+            return "heart";
+          }
+        }
+        return "heart-outline";
+      };
+    }
   }
 };
 </script>

@@ -183,7 +183,7 @@
                       <p class="title is-6 is-size-6-mobile">{{((slide.name).toUpperCase())}}</p>
                     </div>
                     <div class="media-right" @click="loveItem(slide)">
-                      <b-icon class="has-text-grey-light" icon="heart"></b-icon>
+                      <b-icon :class="isLoved(slide.id)" :icon="isLovedIcon(slide.id)"></b-icon>
                     </div>
                   </div>
 
@@ -254,7 +254,7 @@
                         </div>
                         <div class="column is-1 is-paddingless">
                           <div @click="loveItem(slide)" style="padding-top: 2rem">
-                            <b-icon class="has-text-grey-light" icon="heart"></b-icon>
+                            <b-icon :class="isLoved(slide.id)" :icon="isLovedIcon(slide.id)"></b-icon>
                           </div>
                         </div>
                       </div>
@@ -314,20 +314,6 @@ export default {
       limit: 10,
       markerCoordinates: []
     };
-  },
-  computed: {
-    filteredDataObj() {
-      if (this.searchForm.searchType) {
-        return this.cityList.filter(option => {
-          return (
-            option.nama
-              .toString()
-              .toLowerCase()
-              .indexOf(this.searchForm.searchType.toLowerCase()) >= 0
-          );
-        });
-      }
-    }
   },
   methods: {
     seeDetail(id) {
@@ -429,7 +415,40 @@ export default {
   computed: {
     ...mapState({
       love: state => state.love.love
-    })
+    }),
+    isLoved() {
+      return id => {
+        for (let i = 0; i < this.love.length; i++) {
+          if (this.love[i].id === id) {
+            return "has-text-danger";
+          }
+        }
+        return "has-text-grey-light";
+      };
+    },
+    isLovedIcon() {
+      return id => {
+        for (let i = 0; i < this.love.length; i++) {
+          if (this.love[i].id === id) {
+            return "heart";
+            
+          }
+        }
+        return "heart-outline";
+      };
+    },
+    filteredDataObj() {
+      if (this.searchForm.searchType) {
+        return this.cityList.filter(option => {
+          return (
+            option.nama
+              .toString()
+              .toLowerCase()
+              .indexOf(this.searchForm.searchType.toLowerCase()) >= 0
+          );
+        });
+      }
+    }
   },
   created() {
     this.getCity();
