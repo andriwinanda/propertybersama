@@ -129,8 +129,12 @@
                   <div class="media-content" @click="seeDetail(slide.id)">
                     <p class="title is-6 is-size-6-mobile">{{capitalize(slide.name)}}</p>
                   </div>
-                  <div class="media-right" @click="love(slide)" >
-                    <b-icon class="has-text-grey-light" icon="heart"></b-icon>
+                  <div class="media-right" @click="love(slide)">
+                    <b-icon
+                      class="has-text-grey-light"
+                     
+                      icon="heart"
+                    ></b-icon>
                   </div>
                 </div>
 
@@ -219,6 +223,7 @@ import { Carousel, Slide } from "vue-carousel";
 import VueNumeric from "vue-numeric";
 import { capitalizeFLetter } from "../functionHelper.js";
 import { setLove } from "../localstorage-helper";
+import { mapState } from "vuex";
 
 // import debounce from 'lodash/debounce'
 export default {
@@ -336,11 +341,14 @@ export default {
     capitalize(txt) {
       return capitalizeFLetter(txt);
     },
-    love(item){
-      this.$store.commit('love/setLoveItem', item)
+    love(item) {
+      this.$store.commit("love/setLoveItem", item);
     }
   },
   computed: {
+    ...mapState({
+      love: state => state.love.love
+    }),
     filteredDataObj() {
       if (this.searchType) {
         return this.cityList.filter(option => {
@@ -352,7 +360,15 @@ export default {
           );
         });
       }
-    }
+    },
+    // isLoved(id) {
+    //   for (let i = 0; i < this.love.length; i++) {
+    //     if (this.love[i].id == id) {
+    //       return true;
+    //     }
+    //   }
+    //   return false
+    // }
   },
   created() {
     this.getRecomendation();
